@@ -1,0 +1,17 @@
+Package: jentre
+Title: Toolkit for the 'Entrez' API
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Carl",
+           family = "Suster",
+           email = "Carl.Suster@health.nsw.gov.au",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-7021-9380")),
+    person("Western Sydney Local Health District, NSW Health",
+           role = "cph"))
+Description: A client for interacting with NCBI's 'Entrez' API
+    <https://www.ncbi.nlm.nih.gov/books/NBK25499/>.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
