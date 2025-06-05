@@ -5,8 +5,9 @@
 #' usable in the query syntax, and list of link names usable with the ELink
 #' endpoint.
 #' 
-#' @param db name of database to provide information about
-#' @param version response format
+#' @param db name of database to provide information about.
+#' @param retmode response format.
+#' @param version response format version.
 #' @inheritParams entrez_request
 #' @return Character vector of database names for `einfo_databases()`.
 #'   An XML document with root node `<eInfoResult>` for `einfo()`.

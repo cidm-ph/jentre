@@ -30,6 +30,8 @@ elink_map(id_set, db, ..., .cookies = NA, .call = rlang::caller_env())
 \item{...}{additional API parameters (refer to Entrez documentation).
 Any set to \code{NULL} are removed.}
 
+\item{retmode}{response format.}
+
 \item{cmd}{ELink command. If \code{NA} either \code{"neighbor"} or \code{"neighbour_history"} will
 be used based on the type of input.}
 

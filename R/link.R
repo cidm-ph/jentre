@@ -19,6 +19,7 @@
 #' @param db target database name.
 #' @param cmd ELink command. If `NA` either `"neighbor"` or `"neighbour_history"` will
 #'   be used based on the type of input.
+#' @param retmode response format.
 #' @param .batch maximum number of UIDs to submit per request.
 #'   For history server inputs, ELink is very fast.
 #'   For explict ID lists, it tends to time out when requesting too many at once.
@@ -250,7 +251,7 @@ process_xml_eLinkResult_sets <- function(doc) {
       from = list(from),
       linkname = linkname,
       to = purrr::map2(query_key, dbto, \(x, y) entrez_web_history(y, x, WebEnv))
-    ) |> vctrs:::vec_rbind(ret)
+    ) |> vctrs::vec_rbind(ret)
   }) |>
     purrr::list_rbind() |>
     tibble_cnv()
@@ -258,7 +259,7 @@ process_xml_eLinkResult_sets <- function(doc) {
 # example result on history server
 # xh <- xml2::read_xml("<eLinkResult><LinkSet><DbFrom>protein</DbFrom><IdList><Id>15718680</Id><Id>157427902</Id></IdList><LinkSetDbHistory><DbTo>gene</DbTo><LinkName>protein_gene</LinkName><QueryKey>1</QueryKey></LinkSetDbHistory><WebEnv>MCID_683e2b73edf8cc72200bc02f</WebEnv></LinkSet></eLinkResult>")
 
-#' @include utils.R
+#' @include process.R
 .process_elink <- new.env(parent = .process_common)
 .process_elink$sets <- process_xml_eLinkResult_sets
 .process_elink$flat <- process_xml_eLinkResult_flat

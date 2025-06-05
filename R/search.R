@@ -1,9 +1,11 @@
 #' Search Entrez databases
 #' 
 #' The search term field names are documented in the EInfo API endpoint:
-#' see [`entrez_info()`].
+#' see [`einfo()`].
 #' 
 #' @family API methods
+#' @param term search query.
+#' @param db Entrez database name.
 #' @param retstart integer: index of first result (starts from 0).
 #' @param retmax integer: maximum number of results to return.
 #'   Ignored when `usehistory` is `TRUE`.

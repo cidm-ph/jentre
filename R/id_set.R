@@ -118,6 +118,8 @@ length.entrez_web_history <- function(x) x$length
 #' @param id_set ID set object.
 #' @param database name of intended database.
 #'   If `NULL` the database name is not checked.
+#' @param .call execution environment, for error reporting.
+#'   See [rlang::topic-error-call] and the `call` argument of [cli::cli_abort()].
 #' @return `id_set`. This function raises an error if any check fails.
 #' @export
 check_id_set <- function(id_set, database = NULL, .call = rlang::caller_env()) {

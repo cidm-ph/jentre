@@ -51,6 +51,8 @@ efetch <- function(
 #' @family API methods
 #' @param retstart integer: index of first result (starts from 1).
 #'   Note: this differes from other endpoints that start from 0.
+#' @param retmode response format.
+#' @param version response format version.
 #' @inheritParams efetch
 #' @export
 esummary <- function(

@@ -53,7 +53,7 @@ new_request <- function(endpoint, params, .method = "GET", .multi = "comma", .co
   tool_params <- list(email = "Carl.Suster@health.nsw.gov.au", tool = "seqvalue")
   api_key <- Sys.getenv('ENTREZ_KEY')
   if (nchar(api_key) > 0) tool_params$api_key <- api_key
-  params <- modifyList(tool_params, params)
+  params <- utils::modifyList(tool_params, params)
 
   dot_params <- names(params)[startsWith(names(params), ".")]
   if (length(dot_params) > 0) {

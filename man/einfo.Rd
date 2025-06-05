@@ -10,12 +10,14 @@ einfo(db, ..., retmode = "xml", version = "2.0", .call = rlang::caller_env())
 einfo_databases(..., retmode = "xml", .call = rlang::caller_env())
 }
 \arguments{
-\item{db}{name of database to provide information about}
+\item{db}{name of database to provide information about.}
 
 \item{...}{additional API parameters (refer to Entrez documentation).
 Any set to \code{NULL} are removed.}
 
-\item{version}{response format}
+\item{retmode}{response format.}
+
+\item{version}{response format version.}
 
 \item{.call}{call environment to use in error messages/traces.
 You only need to specify this in internal helper functions that don't need to be

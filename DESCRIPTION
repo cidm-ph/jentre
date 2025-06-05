@@ -19,11 +19,18 @@ Collate:
     'fetch.R'
     'id_set.R'
     'info.R'
-    'utils.R'
+    'process.R'
     'link.R'
     'post.R'
     'request.R'
     'search.R'
+    'utils.R'
 Imports: 
+    cli,
     httr2,
+    purrr,
+    rlang,
+    vctrs,
     xml2
+Suggests: 
+    tibble

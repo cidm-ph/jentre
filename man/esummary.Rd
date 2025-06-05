@@ -29,7 +29,9 @@ Note: this differes from other endpoints that start from 0.}
 
 \item{retmax}{integer: maximum number of results to return.}
 
-\item{retmode}{character: currently only \code{"xml"} is supported.}
+\item{retmode}{response format.}
+
+\item{version}{response format version.}
 
 \item{.method}{HTTP verb. If \code{NA}, a sensible default is chosen based on the request parameters.}
 

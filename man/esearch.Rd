@@ -20,6 +20,10 @@ esearch(
 )
 }
 \arguments{
+\item{term}{search query.}
+
+\item{db}{Entrez database name.}
+
 \item{...}{additional API parameters (refer to Entrez documentation).
 Any set to \code{NULL} are removed.}
 
@@ -51,7 +55,7 @@ id set object (either a web history token or explicit list).
 }
 \description{
 The search term field names are documented in the EInfo API endpoint:
-see \code{\link[=entrez_info]{entrez_info()}}.
+see \code{\link[=einfo]{einfo()}}.
 }
 \seealso{
 \url{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESearch}
