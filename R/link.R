@@ -106,6 +106,7 @@ elink <- function(
         parse_response(resp, retmode, call = call) |> .process()
       })
   } else {
+    if (is.na(.cookies)) .cookies <- NULL
     req <- new_request("elink.fcgi", params, .method = .method, .multi = .multi, .cookies = .cookies, .call = .call)
     resp <- httr2::req_perform(req)
     parse_response(resp, retmode, call = .call) |> .process()
@@ -146,7 +147,7 @@ elink_map <- function(
       .process = process_xml_eLinkResult_flat,
       .cookies = .cookies,
       .call = .call
-    )
+    ) |> tibble_cnv()
   } else {
     elink(
       id_set,
@@ -161,7 +162,8 @@ elink_map <- function(
       .call = .call
     ) |>
       purrr::pmap(\(from, linkname, to) remap_links(from, linkname, to, rlang::list2(...), .cookies, .call)) |>
-      purrr::list_rbind()
+      purrr::list_rbind() |>
+      tibble_cnv()
   }
 }
 

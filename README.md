@@ -1,37 +1,28 @@
----
-output: github_document
----
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
 
 # jentre
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
-jentre is a client for the NCBI's Entrez API.
+jentre is a client for the NCBI’s Entrez API.
 
-The Entrez API has many quirks. jentre attempts to deal with those while presenting
-a convenient interface. It is designed for bulk metadata fetching and link traversal,
-though also provides full access to other parts of Entrez, albeit with fewer helpers.
+The Entrez API has many quirks. jentre attempts to deal with those while
+presenting a convenient interface. It is designed for bulk metadata
+fetching and link traversal, though also provides full access to other
+parts of Entrez, albeit with fewer helpers.
 
 Features of jentre:
 
-  * Provides objects representing sets of Entrez identifiers to avoid mixing them up
-  * Batches requests behind the scenes when needed
-  * Based on {httr2} and {xml2}
+- Provides objects representing sets of Entrez identifiers to avoid
+  mixing them up
+- Batches requests behind the scenes when needed
+- Based on {httr2} and {xml2}
 
-The {rentrez} package is more mature and might suit a broader set of applications.
-
+The {rentrez} package is more mature and might suit a broader set of
+applications.
 
 ## Installation
 
@@ -44,7 +35,7 @@ install.packages('jentre', repos = c('https://cidm-ph.r-universe.dev', 'https://
 
 ## Example
 
-```{r example, eval=FALSE}
+``` r
 library(jentre)
 
 # Searches by default use the Entrez history server:
