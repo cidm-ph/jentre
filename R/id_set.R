@@ -75,7 +75,7 @@ format.entrez_id_list <- function(x, ...) {
 }
 #' @export
 print.entrez_id_list <- function(x, ...) {
-  print(format(x, ...))
+  cat(format(x, ...))
 }
 
 #' @export
@@ -88,7 +88,7 @@ format.entrez_web_history <- function(x, ...) {
 }
 #' @export
 print.entrez_web_history <- function(x, ...) {
-  print(format(x, ...))
+  cat(format(x, ...))
 }
 
 #' @export
