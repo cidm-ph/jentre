@@ -10,6 +10,7 @@ entrez_request(
   .method = "GET",
   .multi = "comma",
   .cookies = NULL,
+  .verbose = getOption("jentre.verbose", default = TRUE),
   .call = rlang::caller_env()
 )
 }
@@ -19,7 +20,9 @@ entrez_request(
 \item{...}{additional API parameters (refer to Entrez documentation).
 Any set to \code{NULL} are removed.}
 
-\item{.method}{HTTP verb.}
+\item{.method}{HTTP verb.
+For \code{"POST"}, any params with vector values (usually just \code{id}) are sent in the
+request body instead of the URL.}
 
 \item{.multi}{controls how repeated params are handled (see \code{\link[httr2:req_url]{httr2::req_url_query()}}).}
 
@@ -27,6 +30,10 @@ Any set to \code{NULL} are removed.}
 If \code{NULL}, cookies are not added to the request.
 For helper functions: when \code{NA}, a temporary file is created (in this case only,
 the temporary file will be cleaned up once all requests are performed).}
+
+\item{.verbose}{logical: when TRUE logs all API requests as messages.
+This uses a summarised format that does not include the request body for POST.
+Use normal {httr} verbosity options to override and see more details.}
 
 \item{.call}{call environment to use in error messages/traces.
 You only need to specify this in internal helper functions that don't need to be
@@ -45,7 +52,6 @@ Some parameters have special handling:
 \itemize{
 \item \code{api_key} is copied from the \code{ENTREZ_KEY} environment variable if set.
 \item \code{email} and \code{tool} are set to default values but can be overridden.
-\item \code{retmax} and \code{retstart} are always encoded in the URL query (not the body).
 }
 }
 \section{API limits}{

@@ -48,7 +48,9 @@ Additional builtin processors are available:
 \code{"flat"} to get a data frame of UIDs, or
 \code{NA} to use a sensible choice based on parameters.}
 
-\item{.method}{HTTP verb.}
+\item{.method}{HTTP verb.
+For \code{"POST"}, any params with vector values (usually just \code{id}) are sent in the
+request body instead of the URL.}
 
 \item{.multi}{controls how repeated params are handled (see \code{\link[httr2:req_url]{httr2::req_url_query()}}).}
 
