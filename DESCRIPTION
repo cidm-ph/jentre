@@ -33,4 +33,6 @@ Imports:
     vctrs,
     xml2
 Suggests: 
+    testthat (>= 3.0.0),
     tibble
+Config/testthat/edition: 3
