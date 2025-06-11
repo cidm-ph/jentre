@@ -99,7 +99,7 @@ new_request <- function(
     req <- httr2::req_options(req, debugfunction = debug_request, verbose = TRUE)
   }
 
-  if (!is.null(.cookies)) {
+  if (!is.null(.cookies) && !is.na(.cookies)) {
     req <- httr2::req_cookie_preserve(req, .cookies)
   }
 

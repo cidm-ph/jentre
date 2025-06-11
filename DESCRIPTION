@@ -25,6 +25,8 @@ Collate:
     'request.R'
     'search.R'
     'utils.R'
+Depends:
+    R (>= 4.1.0)
 Imports: 
     cli,
     httr2,

@@ -113,14 +113,6 @@ elink <- function(
   }
 }
 
-split_id_list <- function(id_set, max_per_batch) {
-  n_batches <- ceiling(length(id_set) / max_per_batch)
-  n_per_batch <- ceiling(length(id_set) / n_batches)
-  starts <- seq(from = 1, to = length(id_set) - 1, by = n_per_batch)
-  ends <- unique(c(seq(from = n_per_batch, to = length(id_set), by = n_per_batch), length(id_set)))
-  purrr::map2(starts, ends, \(x, y) id_set[x:y])
-}
-
 #' @rdname elink
 #' @export
 elink_map <- function(

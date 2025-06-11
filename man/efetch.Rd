@@ -8,11 +8,11 @@ efetch(
   id_set,
   ...,
   retstart = 0L,
-  retmax = 500L,
+  retmax = NA,
   retmode = "xml",
   .method = NA,
   .cookies = NA,
-  .paginate = TRUE,
+  .paginate = 200L,
   .process = "identity",
   .call = rlang::caller_env()
 )
@@ -25,9 +25,12 @@ Any set to \code{NULL} are removed.}
 
 \item{retstart}{integer: index of first result (starts from 0).}
 
-\item{retmax}{integer: maximum number of results to return.}
+\item{retmax}{integer: maximum number of results to return.
+When \code{NA} this returns all results. When \code{NULL}, uses the Entrez default (typically 20).
+Note that when using pagination with web history, it is possible that slightly more than
+\code{retmax} results will be returned.}
 
-\item{retmode}{character: currently only \code{"xml"} is supported.}
+\item{retmode}{character: requested document format.}
 
 \item{.method}{HTTP verb. If \code{NA}, a sensible default is chosen based on the request parameters.}
 
@@ -36,7 +39,10 @@ If \code{NULL}, cookies are not added to the request.
 For helper functions: when \code{NA}, a temporary file is created (in this case only,
 the temporary file will be cleaned up once all requests are performed).}
 
-\item{.paginate}{logical: when \code{TRUE} send as many queries as needed to get the complete result.}
+\item{.paginate}{controls how multiple API requests are used to complete the call.
+Pagination is performed using the \code{retstart} and \code{retmax} API parameters.
+When set to an integer, no more than \code{.pagniate} items will be requested per API call.
+When \code{FALSE} or \code{0}, only one API request is sent.}
 
 \item{.process}{function that processes the API results.
 Can be a function or builtin processor as described in \code{\link{process}}.}
