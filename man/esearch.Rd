@@ -9,13 +9,15 @@ esearch(
   db,
   ...,
   retstart = 0L,
-  retmax = 1000L,
+  retmax = NA,
   retmode = "xml",
-  usehistory = TRUE,
+  rettype = "uilist",
+  usehistory = is.null(retmax) || is.na(retmax),
   WebEnv = NULL,
   query_key = NULL,
   .cookies = NA,
-  .paginate = TRUE,
+  .paginate = 10000L,
+  .path = NULL,
   .call = rlang::caller_env()
 )
 }
@@ -27,9 +29,14 @@ esearch(
 \item{...}{additional API parameters (refer to Entrez documentation).
 Any set to \code{NULL} are removed.}
 
-\item{retstart}{integer: index of first result (starts from 0).}
+\item{retstart}{integer: index of first result (starts from 0).
+Ignored when \code{usehistory} is \code{TRUE}.}
 
 \item{retmax}{integer: maximum number of results to return.
+When \code{NA} this returns all results.
+When \code{NULL}, uses the Entrez default (typically 20).
+Note that it is possible that slightly more than \code{retmax} results will be returned
+when paginating.
 Ignored when \code{usehistory} is \code{TRUE}.}
 
 \item{retmode}{character: currently only \code{"xml"} is supported.}
@@ -43,8 +50,14 @@ If \code{NULL}, cookies are not added to the request.
 For helper functions: when \code{NA}, a temporary file is created (in this case only,
 the temporary file will be cleaned up once all requests are performed).}
 
-\item{.paginate}{logical: when \code{TRUE} send as many queries as needed to get the complete result.
+\item{.paginate}{controls how multiple API requests are used to complete the call.
+Pagination is performed using the \code{retstart} and \code{retmax} API parameters.
+When set to an integer, no more than \code{.pagniate} items will be requested per API call.
+When \code{FALSE} or \code{0}, only one API request is sent.
 Ignored when \code{usehistory} is \code{TRUE}.}
+
+\item{.path}{path specification for saving raw responses.
+See \code{path} argument of \code{\link[httr2:req_perform_iterative]{httr2::req_perform_iterative()}}.}
 
 \item{.call}{call environment to use in error messages/traces.
 You only need to specify this in internal helper functions that don't need to be

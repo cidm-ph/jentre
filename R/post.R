@@ -45,6 +45,7 @@ entrez_translate <- function(id_set, .paginate = 5000L, .path = NULL, .call = rl
       query_key = id_set$query_key,
       usehistory = FALSE,
       .paginate = .paginate,
+      .path = .path,
       .call = .call
     )
   } else {

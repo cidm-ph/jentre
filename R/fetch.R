@@ -145,16 +145,9 @@ efetch_impl <- function(
   )
 
   if (.paginate == 0L) {
-    path <- if (is.null(.path)) {
-      NULL
-    } else {
-      glue_env <- new.env(parent = emptyenv())
-      glue_env$i <- 1L
-      glue::glue(.path, .envir = glue_env)
-    }
     req <- new_request(.endpoint, params, .method = .method, .cookies = .cookies, .call = .call)
     resp <-
-      httr2::req_perform(req, path = path) |>
+      httr2::req_perform(req, path = path_glue_dummy(.path)) |>
       parse_response(retmode, call = .call) |>
       .process()
     return(resp)
@@ -175,6 +168,8 @@ efetch_impl <- function(
     params$id <- entrez_ids(sets[[1]])
     params$retstart <- NULL
     params$retmax <- .paginate
+    # FIXME warn if .method != "POST" to avoid surprises (or accomodate id existing in URL query)
+    # FIXME if only 1 UID is provided it'll end up in the URL query anyway and error
     req <- new_request(.endpoint, params, .method = "POST", .cookies = .cookies, .call = .call)
     iterate_body_form(id = Map(entrez_ids, sets[2:length(sets)]), .multi = "comma", .call = .call)
   } else {

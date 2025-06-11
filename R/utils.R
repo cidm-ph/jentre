@@ -115,3 +115,16 @@ iterate_body_form <- function(..., .multi = "error", .call = rlang::caller_env()
     req_body_form_modify(req, !!!values, .multi = .multi, .call = .call)
   }
 }
+
+# for using with httr::req_perform*(path) in cases where
+# we need to account for single or multi request branches
+# with the same glue spec
+path_glue_dummy <- function(path) {
+  if (is.null(path)) {
+    NULL
+  } else {
+    glue_env <- new.env(parent = emptyenv())
+    glue_env$i <- 1L
+    glue::glue(path, .envir = glue_env)
+  }
+}
