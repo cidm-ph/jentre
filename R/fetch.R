@@ -145,17 +145,16 @@ efetch_impl <- function(
   )
 
   if (.paginate == 0L) {
-    get_path <- function(i) {
-      if (is.null(path)) NULL
-      else {
-        glue_env <- new.env(parent = emptyenv())
-        glue_env$i <- 1L
-        glue::glue(path, .envir = glue_env)
-      }
+    path <- if (is.null(.path)) {
+      NULL
+    } else {
+      glue_env <- new.env(parent = emptyenv())
+      glue_env$i <- 1L
+      glue::glue(.path, .envir = glue_env)
     }
     req <- new_request(.endpoint, params, .method = .method, .cookies = .cookies, .call = .call)
     resp <-
-      httr2::req_perform(req, path = get_path(.path)) |>
+      httr2::req_perform(req, path = path) |>
       parse_response(retmode, call = .call) |>
       .process()
     return(resp)
@@ -176,7 +175,7 @@ efetch_impl <- function(
     params$id <- entrez_ids(sets[[1]])
     params$retstart <- NULL
     params$retmax <- .paginate
-    req <- new_request(.endpoint, params, .method = .method, .cookies = .cookies, .call = .call)
+    req <- new_request(.endpoint, params, .method = "POST", .cookies = .cookies, .call = .call)
     iterate_body_form(id = Map(entrez_ids, sets[2:length(sets)]), .multi = "comma", .call = .call)
   } else {
     n_batches <- ceiling(n_items / .paginate)
@@ -203,33 +202,4 @@ efetch_impl <- function(
     httr2::resps_data(function(resp) {
       parse_response(resp, retmode, call = .call) |> .process()
     })
-}
-
-#' Convert web history result or accessions and other IDs to Entrez UIDs
-#' 
-#' @family API methods
-#' @inheritParams efetch
-#' @export
-entrez_translate <- function(id_set, retmax = 10000L, .call = rlang::caller_env()) {
-  .method <- if (is.entrez_id_list(id_set)) "POST" else "GET"
-
-  params <- rlang::list2(
-    !!!entrez_id_params(id_set),
-    retmax = retmax,
-    rettype = "uilist",
-    retmode = "xml",
-  )
-  req <- new_request("efetch.fcgi", params, .method = .method)
-
-  ids <- efetch_paginate(
-    req,
-    retstart = 0L,
-    retmax = retmax,
-    retmode = "xml",
-    n_items = compute_n_items(id_set, call = .call),
-    .process = function(doc) { doc |> xml_find_all("/IdList/Id") |> xml_text() },
-    call = .call
-  )
-
-  entrez_id_list(db = entrez_database(id_set), ids = ids)
 }

@@ -28,3 +28,35 @@ epost <- function(id_set, ..., WebEnv = NULL, .call = rlang::caller_env()) {
     length = length(ids)
   )
 }
+
+#' Convert web history result or accessions and other IDs to Entrez UIDs
+#' 
+#' @family API methods
+#' @inheritParams epost
+#' @inheritParams efetch
+#' @export
+entrez_translate <- function(id_set, .paginate = 5000L, .path = NULL, .call = rlang::caller_env()) {
+  if (!.paginate) .paginate <- 5000L
+  if (is.entrez_web_history(id_set)) {
+    esearch(
+      term = "",
+      db = entrez_database(id_set),
+      WebEnv = id_set$WebEnv,
+      query_key = id_set$query_key,
+      usehistory = FALSE,
+      .paginate = .paginate,
+      .call = .call
+    )
+  } else {
+    ids <- efetch(
+      id_set,
+      retmode = "xml",
+      rettype = "uilist",
+      .process = function(doc) { doc |> xml_find_all("/IdList/Id") |> xml_text() },
+      .paginate = .paginate,
+      .path = .path,
+      .call = .call
+    )
+    entrez_id_list(db = entrez_database(id_set), ids = ids)
+  }
+}

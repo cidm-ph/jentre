@@ -14,6 +14,7 @@ efetch(
   .cookies = NA,
   .paginate = 200L,
   .process = "identity",
+  .path = NULL,
   .call = rlang::caller_env()
 )
 }
@@ -46,6 +47,9 @@ When \code{FALSE} or \code{0}, only one API request is sent.}
 
 \item{.process}{function that processes the API results.
 Can be a function or builtin processor as described in \code{\link{process}}.}
+
+\item{.path}{path specification for saving raw responses.
+See \code{path} argument of \code{\link[httr2:req_perform_iterative]{httr2::req_perform_iterative()}}.}
 
 \item{.call}{call environment to use in error messages/traces.
 You only need to specify this in internal helper functions that don't need to be
