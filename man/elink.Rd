@@ -17,10 +17,18 @@ elink(
   .multi = "explode",
   .progress = TRUE,
   .cookies = NA,
-  .call = rlang::caller_env()
+  .path = NULL,
+  .call = rlang::current_env()
 )
 
-elink_map(id_set, db, ..., .cookies = NA, .call = rlang::caller_env())
+elink_map(
+  id_set,
+  db,
+  ...,
+  .cookies = NA,
+  .path = NULL,
+  .call = rlang::current_env()
+)
 }
 \arguments{
 \item{id_set}{ID set object.}

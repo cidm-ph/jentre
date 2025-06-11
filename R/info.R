@@ -13,7 +13,7 @@
 #'   An XML document with root node `<eInfoResult>` for `einfo()`.
 #' @family API methods
 #' @export
-einfo <- function(db, ..., retmode = "xml", version = "2.0", .call = rlang::caller_env()) {
+einfo <- function(db, ..., retmode = "xml", version = "2.0", .call = rlang::current_env()) {
   params <- rlang::list2(
     db = db,
     retmode = retmode,
@@ -27,7 +27,7 @@ einfo <- function(db, ..., retmode = "xml", version = "2.0", .call = rlang::call
 
 #' @rdname einfo
 #' @export
-einfo_databases <- function(..., retmode = "xml", .call = rlang::caller_env()) {
+einfo_databases <- function(..., retmode = "xml", .call = rlang::current_env()) {
   if (retmode != "xml") {
     cli::cli_abort("Currently only XML format is supported", call = .call)
   }

@@ -34,7 +34,7 @@ efetch <- function(
   .paginate = 200L,
   .process = "identity",
   .path = NULL,
-  .call = rlang::caller_env()
+  .call = rlang::current_env()
 ) {
   efetch_impl(
     id_set,
@@ -75,7 +75,7 @@ esummary <- function(
   .paginate = 5000L,
   .process = "identity",
   .path = NULL,
-  .call = rlang::caller_env()
+  .call = rlang::current_env()
 ) {
   efetch_impl(
     id_set,
@@ -116,7 +116,6 @@ efetch_impl <- function(
     .method <- if (is.entrez_web_history(id_set)) "GET" else "POST"
   }
 
-  .process <- as_function(.process, env = .process_common, call = .call)
   .paginate <- as.integer(.paginate)
 
   n_items <- NA
@@ -149,7 +148,7 @@ efetch_impl <- function(
     resp <-
       httr2::req_perform(req, path = path_glue_dummy(.path)) |>
       parse_response(retmode, call = .call) |>
-      .process()
+      process_response(fn = .process, call = .call, arg = ".process")
     return(resp)
   }
 
@@ -195,6 +194,7 @@ efetch_impl <- function(
     ) |>
     httr2::resps_successes() |>
     httr2::resps_data(function(resp) {
-      parse_response(resp, retmode, call = .call) |> .process()
+      parse_response(resp, retmode, call = .call) |>
+        process_response(fn = .process, call = .call, arg = ".process")
     })
 }

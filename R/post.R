@@ -5,7 +5,7 @@
 #' @inheritParams entrez_request
 #' @family API methods
 #' @export
-epost <- function(id_set, ..., WebEnv = NULL, .call = rlang::caller_env()) {
+epost <- function(id_set, ..., WebEnv = NULL, .call = rlang::current_env()) {
   stopifnot(is.entrez_id_list(id_set))
 
   ids <- entrez_ids(id_set)
@@ -20,11 +20,11 @@ epost <- function(id_set, ..., WebEnv = NULL, .call = rlang::caller_env()) {
   )
   req <- new_request("epost.fcgi", params, .method = "POST", .call = .call)
 
-  data <- httr2::req_perform(req) |> parse_response("xml", call = .call)
+  doc <- httr2::req_perform(req) |> parse_response("xml", call = .call)
   entrez_web_history(
     db = db,
-    query_key = data |> xml2::xml_find_first("QueryKey") |> xml2::xml_text(),
-    WebEnv = data |> xml2::xml_find_first("WebEnv") |> xml2::xml_text(),
+    query_key = doc |> xml2::xml_find_first("//QueryKey") |> xml2::xml_text(),
+    WebEnv = doc |> xml2::xml_find_first("//WebEnv") |> xml2::xml_text(),
     length = length(ids)
   )
 }
@@ -35,7 +35,7 @@ epost <- function(id_set, ..., WebEnv = NULL, .call = rlang::caller_env()) {
 #' @inheritParams epost
 #' @inheritParams efetch
 #' @export
-entrez_translate <- function(id_set, .paginate = 5000L, .path = NULL, .call = rlang::caller_env()) {
+entrez_translate <- function(id_set, .paginate = 5000L, .path = NULL, .call = rlang::current_env()) {
   if (!.paginate) .paginate <- 5000L
   if (is.entrez_web_history(id_set)) {
     esearch(

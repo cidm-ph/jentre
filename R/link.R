@@ -60,7 +60,8 @@ elink <- function(
   .multi = "explode",
   .progress = TRUE,
   .cookies = NA,
-  .call = rlang::caller_env()
+  .path = NULL,
+  .call = rlang::current_env()
 ) {
   id_params <- entrez_id_params(id_set)
   id_params$dbfrom <- id_params$db
@@ -79,8 +80,6 @@ elink <- function(
     }
   }
 
-  .process <- as_function(.process, env = .process_elink, call = .call)
-  
   params <- rlang::list2(
     db = db,
     !!!id_params,
@@ -95,21 +94,34 @@ elink <- function(
       on.exit(if (file.exists(.cookies)) file.remove(.cookies), add = TRUE)
     }
 
-    split_id_list(id_set, .batch) |>
-      purrr::map(function(id_subset) {
-        params$id <- entrez_ids(id_subset)
-        new_request("elink.fcgi", params, .method = .method, .multi = .multi, .cookies = .cookies, .call = .call)
-      }) |>
-      httr2::req_perform_sequential(progress = .progress) |>
+    sets <- split_id_list(id_set, max_per_batch = .batch)
+    params$id <- entrez_ids(sets[[1]])
+    # FIXME warn if .method != "POST" to avoid surprises (or accomodate id existing in URL query)
+    # FIXME if only 1 UID is provided it'll end up in the URL query anyway and error
+    req <- new_request(.endpoint, params, .method = "POST", .cookies = .cookies, .call = .call)
+
+    req |>
+      httr2::req_perform_iterative(
+        next_req = iterate_body_form(
+          id = Map(entrez_ids, sets[2:length(sets)]),
+          .multi = "comma",
+          .call = .call
+        ),
+        path = .path,
+        max_reqs = length(sets),
+        on_error = "return",
+        progress = "ELink"
+      ) |>
       httr2::resps_successes() |>
       httr2::resps_data(function(resp) {
-        parse_response(resp, retmode, call = call) |> .process()
+        parse_response(resp, retmode, call = .call) |>
+          process_response(fn = .process, envir = .process_elink, call = .call, arg = ".process")
       })
   } else {
-    if (is.na(.cookies)) .cookies <- NULL
     req <- new_request("elink.fcgi", params, .method = .method, .multi = .multi, .cookies = .cookies, .call = .call)
-    resp <- httr2::req_perform(req)
-    parse_response(resp, retmode, call = .call) |> .process()
+    resp <- httr2::req_perform(req, path = path_glue_dummy(.path))
+    parse_response(resp, retmode, call = .call) |>
+      process_response(fn = .process, envir = .process_elink, call = .call, arg = ".process")
   }
 }
 
@@ -120,7 +132,8 @@ elink_map <- function(
   db,
   ...,
   .cookies = NA,
-  .call = rlang::caller_env()
+  .path = NULL,
+  .call = rlang::current_env()
 ) {
   if (is.na(.cookies)) {
     .cookies <- tempfile()
@@ -138,25 +151,30 @@ elink_map <- function(
       .multi = "explode",
       .process = process_xml_eLinkResult_flat,
       .cookies = .cookies,
+      .path = .path,
       .call = .call
     ) |> tibble_cnv()
   } else {
+    params <- rlang::list2(...)
     elink(
       id_set,
       db,
-      ...,
+      !!!params,
       cmd = "neighbor",
       retmode = "xml",
       .method = "GET",
       .multi = "comma",
       .process = process_xml_eLinkResult_sets,
       .cookies = .cookies,
+      .path = .path,
       .call = .call
     ) |>
-      purrr::pmap(\(from, linkname, to) remap_links(from, linkname, to, rlang::list2(...), .cookies, .call)) |>
+      purrr::pmap(function(from, linkname, to) {
+        remap_links(from, linkname, to, params, .cookies, .call)
+      }) |>
       purrr::list_rbind() |>
       tibble_cnv()
-  }
+      }
 }
 
 # from - entrez_id_list
@@ -176,11 +194,12 @@ remap_links <- function(from, linkname, to, params, .cookies, .call) {
 }
 
 process_xml_eLinkResult_flat <- function(doc) {
+  check_xml_root(doc, "eLinkResult")
   n_linkset <- doc |> xml_find_all("/eLinkResult/LinkSet") |> length()
   n_source <- doc |> xml_find_all("/eLinkResult/LinkSet/IdList/Id") |> length()
 
   if (!is.na(xml_find_first(doc, "//LinkSetDbHistory"))) {
-    stop("Can't process history server result into a flat data frame")
+    cli::cli_abort("Can't process history server result into a flat data frame")
   }
 
   if (n_linkset == n_source) {
@@ -200,8 +219,6 @@ process_xml_LinkSet_df_one_to_one <- function(doc) {
     id_to = links |> xml_find_all("./Link/Id", flatten = FALSE) |> purrr::map(xml_text),
   )
 }
-# example one-to-one
-# xo2o <- xml2::read_xml("<eLinkResult><LinkSet><DbFrom>protein</DbFrom><IdList><Id>15718680</Id></IdList><LinkSetDb><DbTo>gene</DbTo><LinkName>protein_gene</LinkName><Link><Id>3702</Id></Link></LinkSetDb></LinkSet><LinkSet><DbFrom>protein</DbFrom><IdList><Id>157427902</Id></IdList><LinkSetDb><DbTo>gene</DbTo><LinkName>protein_gene</LinkName><Link><Id>522311</Id></Link></LinkSetDb></LinkSet></eLinkResult>")
 
 process_xml_LinkSet_df_many_to_many <- function(doc) {
   links <- xml_find_all(doc, "LinkSet/LinkSetDb")
@@ -217,6 +234,7 @@ process_xml_LinkSet_df_many_to_many <- function(doc) {
 # xm2m <- xml2::read_xml("<eLinkResult><LinkSet><DbFrom>protein</DbFrom><IdList><Id>15718680</Id><Id>157427902</Id></IdList><LinkSetDb><DbTo>gene</DbTo><LinkName>protein_gene</LinkName><Link><Id>522311</Id></Link><Link><Id>3702</Id></Link></LinkSetDb></LinkSet></eLinkResult>")
 
 process_xml_eLinkResult_sets <- function(doc) {
+  check_xml_root(doc, "eLinkResult")
   sets <- xml_find_all(doc, "/eLinkResult/LinkSet")
   purrr::map(sets, function(set) {
     # source set is always an explicit list, even when user input was a WebEnv

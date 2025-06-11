@@ -38,37 +38,57 @@ install.packages('jentre', repos = c('https://cidm-ph.r-universe.dev', 'https://
 ``` r
 library(jentre)
 
-# Searches by default use the Entrez history server:
-results <- esearch("vibrio cholerae[orgn]", "biosample")
-# <entrez@/biosample d085e#1 [31496 UIDs]>
+# Searches by default use the Entrez history server for efficiency:
+results <- esearch("Corynebacterium diphtheriae[orgn]", "biosample")
+results
+#> <entrez@/biosample f20ac#1 [4124 UIDs]>
 
-links <- elink(results, "bioproject")
-# # A tibble: 2 × 3
-#   from       linkname                 to        
-#   <list>     <chr>                    <list>    
-# 1 <entrz_d_> biosample_bioproject     <entrz_w_>
-# 2 <entrz_d_> biosample_bioproject_all <entrz_w_>
+# The return object keeps track of which database the UIDs belong to,
+# and whether the UIDs are local or on the history server. This makes
+# them easier and less error-prone to use:
+links <- elink(results, "sra")
+links
+#> # A tibble: 1 × 3
+#>   from       linkname      to        
+#>   <list>     <chr>         <list>    
+#> 1 <entrz_d_> biosample_sra <entrz_w_>
 
-# You can force one-to-one links:
-elink_map(y, "bioproject", linkname = "biosample_bioproject")
-# # A tibble: 7 × 5
-#   db_from    id_from db_to      linkname             id_to    
-#   <chr>      <chr>   <chr>      <chr>                <list>   
-# 1 bioproject 1086945 bioproject biosample_bioproject <chr [1]>
-# 2 bioproject 610963  bioproject biosample_bioproject <chr [2]>
-# 3 bioproject 610543  bioproject biosample_bioproject <chr [2]>
-
-# History server results can be converted into explicit ID lists:
+# You can pull a list of UIDs from the history server:
 ids <- entrez_translate(links$to[[1]])
-# <entrez/bioproject [28 UIDs]>
+
+# This is a vector with some extra metadata attached, but can be
+# subsetted normally:
 head(ids, n = 10)
-# <entrez/bioproject [10 UIDs]>
+#> <entrez/sra [10 UIDs]>
 entrez_ids(ids[4:8])
-# [1] "1261856" "1258490" "1253705" "1247499" "1246491"
+#> [1] "38641044" "38501020" "38428896" "38428225" "38427762"
 
+# For endpoints with richer data, you can provide an function to
+# extract data you care about from the XML document. The output is
+# combined if multiple API requests are needed, so you can end up
+# with a single combined data frame, list, or vector:
+esummary(
+  ids[1:20],
+  .process = function(doc) {
+    xml2::xml_find_all(doc, "//DocumentSummary/CreateDate") |> xml2::xml_text()
+  }
+)
+#>  [1] "2025/05/29" "2025/05/21" "2025/05/21" "2025/05/14" "2025/05/05"
+#>  [6] "2025/04/30" "2025/04/30" "2025/04/30" "2025/04/29" "2025/04/29"
+#> [11] "2025/04/29" "2025/04/29" "2025/04/29" "2025/04/29" "2025/04/29"
+#> [16] "2025/04/29" "2025/04/29" "2025/04/21" "2025/04/21" "2025/04/21"
 
-# If needed, you can construct an arbitrary request
+# If needed, you can construct an arbitrary request:
 req <- entrez_request("esearch.fcgi", db = "nucleotide", term = "biomol+trna[prop]")
-# you'll need to execute and parse it yourself:
+# You'll need to execute and parse it yourself:
 httr2::req_perform(req) |> httr2::resp_body_xml()
+#> {xml_document}
+#> <eSearchResult>
+#> [1] <Count>1012</Count>
+#> [2] <RetMax>20</RetMax>
+#> [3] <RetStart>0</RetStart>
+#> [4] <IdList>\n  <Id>2737963026</Id>\n  <Id>2586967820</Id>\n  <Id>2274792564< ...
+#> [5] <TranslationSet/>
+#> [6] <TranslationStack>\n  <TermSet>\n    <Term>biomol+trna[prop]</Term>\n     ...
+#> [7] <QueryTranslation>biomol+trna[prop]</QueryTranslation>
 ```

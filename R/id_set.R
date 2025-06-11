@@ -122,7 +122,7 @@ length.entrez_web_history <- function(x) x$length
 #'   See [rlang::topic-error-call] and the `call` argument of [cli::cli_abort()].
 #' @return `id_set`. This function raises an error if any check fails.
 #' @export
-check_id_set <- function(id_set, database = NULL, .call = rlang::caller_env()) {
+check_id_set <- function(id_set, database = NULL, call = rlang::caller_env()) {
   if (!is.null(database)) {
     actual_db <- entrez_database(id_set) 
     if (database != actual_db) {
@@ -134,7 +134,13 @@ check_id_set <- function(id_set, database = NULL, .call = rlang::caller_env()) {
   }
 
   if (is.entrez_id_list(id_set)) {
-    if (any(is.na(id_set$ids))) stop("NA IDs in id_set")
+    if (is.na(id_set$database)) cli::cli_abort("{.param database} cannot be {.val NA}", call = call)
+    if (any(is.na(id_set$ids))) cli::cli_abort("{.val NA} UIDs", call = call)
+  }
+  if (is.entrez_web_history(id_set)) {
+    if (is.na(id_set$database)) cli::cli_abort("{.param database} cannot be {.val NA}", call = call)
+    if (is.na(id_set$WebEnv)) cli::cli_abort("{.param WebEnv} cannot be {.val NA}", call = call)
+    if (is.na(id_set$query_key)) cli::cli_abort("{.param query_key} cannot be {.val NA}", call = call)
   }
 
   id_set

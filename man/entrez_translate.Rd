@@ -8,7 +8,7 @@ entrez_translate(
   id_set,
   .paginate = 5000L,
   .path = NULL,
-  .call = rlang::caller_env()
+  .call = rlang::current_env()
 )
 }
 \arguments{

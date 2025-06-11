@@ -4,7 +4,7 @@
 \alias{epost}
 \title{Register UIDs with the Entrez history server}
 \usage{
-epost(id_set, ..., WebEnv = NULL, .call = rlang::caller_env())
+epost(id_set, ..., WebEnv = NULL, .call = rlang::current_env())
 }
 \arguments{
 \item{id_set}{an \code{\link{entrez_id_list}} object.}

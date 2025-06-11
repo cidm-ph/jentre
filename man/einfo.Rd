@@ -5,9 +5,9 @@
 \alias{einfo_databases}
 \title{Get details about Entrez databases}
 \usage{
-einfo(db, ..., retmode = "xml", version = "2.0", .call = rlang::caller_env())
+einfo(db, ..., retmode = "xml", version = "2.0", .call = rlang::current_env())
 
-einfo_databases(..., retmode = "xml", .call = rlang::caller_env())
+einfo_databases(..., retmode = "xml", .call = rlang::current_env())
 }
 \arguments{
 \item{db}{name of database to provide information about.}

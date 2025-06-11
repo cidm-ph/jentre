@@ -21,6 +21,7 @@
 #' 
 #' @name topic-process
 #' @aliases process
+#' @importFrom xml2 xml_text xml_find_first xml_find_all
 NULL
 
 # @param doc any parsed Entrez response document (e.g. {xml2} document or string)
@@ -30,3 +31,77 @@ process_identity <- function(doc) {
 }
 .process_common <- new.env(parent = emptyenv())
 .process_common$identity <- process_identity
+
+process_response <- function(
+  doc,
+  fn,
+  envir = .process_common,
+  call = rlang::caller_env(),
+  arg = rlang::caller_arg(fn)
+) {
+  fn <- as_function(fn, arg = arg, call = call)
+  rlang::try_fetch(
+    fn(doc),
+    error = function(cnd) {
+      cnd$call <- call(arg)
+      rlang::abort("Failed to process API response", parent = cnd, call = call)
+    }
+  )
+}
+
+as_function <- function(
+  x,
+  envir = emptyenv(),
+  arg = rlang::caller_arg(x),
+  call = rlang::caller_env()
+) {
+  if (is.character(x)) {
+    if (exists(x, envir = envir, mode = "function")) {
+      get(x, envir = envir, mode = "function")
+    } else {
+      cli::cli_abort(c(
+        "{.val {x}} is not an allowed choice for {.arg {arg}}",
+        "i" = "Choose from options: {.val {list_names(envir)}}, or provide a function"
+      ), call = call)
+    }
+  } else if (rlang::is_function(x)) {
+    return(x)
+  } else {
+    cli::cli_abort(c(
+      "{.arg {arg}} must be a function, not {.val {x}}",
+        "i" = "Provide a function or choose from options: {.val {list_names(envir)}}"
+    ), call = call)
+  }
+}
+
+list_names <- function(env) {
+  names <- character()
+  while (!identical(env, emptyenv())) {
+    names <- c(names, ls(env))
+    env <- parent.env(env)
+  }
+  sort(names)
+}
+
+check_xml_root <- function(doc, expected, call = rlang::caller_env()) {
+  root <- xml2::xml_root(doc) |> xml2::xml_name()
+  if (root != expected) {
+    cli::cli_abort(
+      "Incorrect XML root node {.field <{root}>}, expecting {.field <{expected}>}",
+      call = call
+    )
+  }
+}
+
+xml_text_from_list <- function(x) {
+  purrr::map_chr(x, function(y) {
+    y <- xml_text(y)
+    if (length(y) > 0) y else NA_character_
+  })
+}
+
+tibble_cnv <- function(df) {
+  if (rlang::is_installed("tibble")) {
+    tibble::as_tibble(df)
+  }
+}

@@ -4,7 +4,7 @@
 \alias{check_id_set}
 \title{Check ID set is well formed}
 \usage{
-check_id_set(id_set, database = NULL, .call = rlang::caller_env())
+check_id_set(id_set, database = NULL, call = rlang::caller_env())
 }
 \arguments{
 \item{id_set}{ID set object.}

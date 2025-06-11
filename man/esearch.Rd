@@ -18,7 +18,7 @@ esearch(
   .cookies = NA,
   .paginate = 10000L,
   .path = NULL,
-  .call = rlang::caller_env()
+  .call = rlang::current_env()
 )
 }
 \arguments{

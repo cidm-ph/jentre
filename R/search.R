@@ -42,7 +42,7 @@ esearch <- function(
   .cookies = NA,
   .paginate = 10000L,
   .path = NULL,
-  .call = rlang::caller_env()
+  .call = rlang::current_env()
 ) {
   force(usehistory)
 
@@ -84,6 +84,7 @@ esearch <- function(
     doc <-
       httr2::req_perform(req, path = path_glue_dummy(.path)) |>
       parse_response("xml", call = .call)
+    check_xml_root(doc, "eSearchResult")
     entrez_web_history(
       db = db,
       query_key = doc |> xml_find_first("/eSearchResult/QueryKey") |> xml_text(),
@@ -98,7 +99,7 @@ esearch <- function(
     ids <-
       httr2::req_perform(req, path = path_glue_dummy(.path)) |>
       parse_response("xml", call = .call) |>
-      process_xml_eSearchResult_uilist()
+      process_response(fn = process_xml_eSearchResult_uilist, call = .call)
     entrez_id_list(db, ids)
   } else {
     params$retmax <- .paginate
@@ -116,7 +117,8 @@ esearch <- function(
           offset = .paginate,
           resp_pages = function(resp) {
             n_items <- if (is.na(retmax)) {
-              parse_response(resp, "xml", call = call) |> process_xml_eSearchResult_count()
+              parse_response(resp, "xml", call = call) |>
+                process_response(fn = process_xml_eSearchResult_count, call = .call)
             } else {
               retmax - retstart
             }
@@ -126,7 +128,8 @@ esearch <- function(
       ) |>
       httr2::resps_successes() |>
       httr2::resps_data(function(resp) {
-        parse_response(resp, "xml", call = .call) |> process_xml_eSearchResult_uilist()
+        parse_response(resp, "xml", call = .call) |>
+          process_response(fn = process_xml_eSearchResult_uilist, call = .call)
       })
     
     entrez_id_list(db, ids)
@@ -160,12 +163,14 @@ entrez_count <- function(id_set, .call = rlang::caller_env()) {
 }
 
 process_xml_eSearchResult_count <- function(doc) {
+  check_xml_root(doc, "eSearchResult")
   doc |> 
     xml_find_first("/eSearchResult/Count") |>
     xml2::xml_integer()
 }
 
 process_xml_eSearchResult_uilist <- function(doc) {
+  check_xml_root(doc, "eSearchResult")
   doc |>
     xml_find_all("/eSearchResult/IdList/Id") |>
     xml_text()

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
+<eSearchResult><Count>4124</Count><RetMax>20</RetMax><RetStart>0</RetStart><QueryKey>1</QueryKey><WebEnv>MCID_68491955830fdfaa740f20ac</WebEnv><IdList>
+<Id>48794373</Id>
+<Id>25124829</Id>
+<Id>25124828</Id>
+<Id>48485174</Id>
+<Id>48672232</Id>
+<Id>48672218</Id>
+<Id>48349095</Id>
+<Id>48279212</Id>
+<Id>48278158</Id>
+<Id>48277101</Id>
+<Id>48197610</Id>
+<Id>48197609</Id>
+<Id>48197608</Id>
+<Id>48197607</Id>
+<Id>48197606</Id>
+<Id>48197605</Id>
+<Id>48197604</Id>
+<Id>48197603</Id>
+<Id>48197602</Id>
+<Id>48025762</Id>
+</IdList><TranslationSet><Translation>     <From>Corynebacterium diphtheriae[orgn]</From>     <To>"Corynebacterium diphtheriae"[Organism]</To>    </Translation></TranslationSet><TranslationStack>   <TermSet>    <Term>"Corynebacterium diphtheriae"[Organism]</Term>    <Field>Organism</Field>    <Count>4124</Count>    <Explode>Y</Explode>   </TermSet>   <OP>GROUP</OP>  </TranslationStack><QueryTranslation>"Corynebacterium diphtheriae"[Organism]</QueryTranslation></eSearchResult>

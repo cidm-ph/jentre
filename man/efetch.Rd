@@ -15,7 +15,7 @@ efetch(
   .paginate = 200L,
   .process = "identity",
   .path = NULL,
-  .call = rlang::caller_env()
+  .call = rlang::current_env()
 )
 }
 \arguments{

@@ -16,7 +16,7 @@ esummary(
   .paginate = 5000L,
   .process = "identity",
   .path = NULL,
-  .call = rlang::caller_env()
+  .call = rlang::current_env()
 )
 }
 \arguments{

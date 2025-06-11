@@ -44,40 +44,59 @@ install.packages('jentre', repos = c('https://cidm-ph.r-universe.dev', 'https://
 
 ## Example
 
-```{r example, eval=FALSE}
+```{r, echo=FALSE}
+c(
+  "esearch_web_history.xml",
+  "elink_manytomany.xml",
+  "entrez_translate_web_history.xml",
+  "esummary_sra.xml",
+  "esearch_demo.xml"
+) |>
+  purrr::map(function(path) {
+    path <- file.path("tests/responses", path)
+    httr2::response(
+      status_code = 200,
+      headers = c("Content-Type: application/xml"),
+      body = readBin(path, "raw", file.size(path))
+    )
+  }) |>
+  httr2::local_mocked_responses()
+```
+
+```{r example}
 library(jentre)
 
-# Searches by default use the Entrez history server:
-results <- esearch("vibrio cholerae[orgn]", "biosample")
-# <entrez@/biosample d085e#1 [31496 UIDs]>
+# Searches by default use the Entrez history server for efficiency:
+results <- esearch("Corynebacterium diphtheriae[orgn]", "biosample")
+results
 
-links <- elink(results, "bioproject")
-# # A tibble: 2 × 3
-#   from       linkname                 to        
-#   <list>     <chr>                    <list>    
-# 1 <entrz_d_> biosample_bioproject     <entrz_w_>
-# 2 <entrz_d_> biosample_bioproject_all <entrz_w_>
+# The return object keeps track of which database the UIDs belong to,
+# and whether the UIDs are local or on the history server. This makes
+# them easier and less error-prone to use:
+links <- elink(results, "sra")
+links
 
-# You can force one-to-one links:
-elink_map(y, "bioproject", linkname = "biosample_bioproject")
-# # A tibble: 7 × 5
-#   db_from    id_from db_to      linkname             id_to    
-#   <chr>      <chr>   <chr>      <chr>                <list>   
-# 1 bioproject 1086945 bioproject biosample_bioproject <chr [1]>
-# 2 bioproject 610963  bioproject biosample_bioproject <chr [2]>
-# 3 bioproject 610543  bioproject biosample_bioproject <chr [2]>
-
-# History server results can be converted into explicit ID lists:
+# You can pull a list of UIDs from the history server:
 ids <- entrez_translate(links$to[[1]])
-# <entrez/bioproject [28 UIDs]>
+
+# This is a vector with some extra metadata attached, but can be
+# subsetted normally:
 head(ids, n = 10)
-# <entrez/bioproject [10 UIDs]>
 entrez_ids(ids[4:8])
-# [1] "1261856" "1258490" "1253705" "1247499" "1246491"
 
+# For endpoints with richer data, you can provide an function to
+# extract data you care about from the XML document. The output is
+# combined if multiple API requests are needed, so you can end up
+# with a single combined data frame, list, or vector:
+esummary(
+  ids[1:20],
+  .process = function(doc) {
+    xml2::xml_find_all(doc, "//DocumentSummary/CreateDate") |> xml2::xml_text()
+  }
+)
 
-# If needed, you can construct an arbitrary request
+# If needed, you can construct an arbitrary request:
 req <- entrez_request("esearch.fcgi", db = "nucleotide", term = "biomol+trna[prop]")
-# you'll need to execute and parse it yourself:
+# You'll need to execute and parse it yourself:
 httr2::req_perform(req) |> httr2::resp_body_xml()
 ```
