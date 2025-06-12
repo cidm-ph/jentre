@@ -15,6 +15,7 @@
 #'   when paginating.
 #'   Ignored when `usehistory` is `TRUE`.
 #' @param retmode character: currently only `"xml"` is supported.
+#' @param rettype character: currently only `"uilist"` is supported.
 #' @param usehistory logical: when `TRUE` use the history server to return the result.
 #' @param WebEnv,query_key either characters to pass on as-is, or [`entrez_web_history`] objects.
 #' @param .paginate controls how multiple API requests are used to complete the call.

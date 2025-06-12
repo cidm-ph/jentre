@@ -11,7 +11,7 @@ elink(
   ...,
   retmode = "xml",
   cmd = NA,
-  .batch = 100L,
+  .paginate = 100L,
   .process = NA,
   .method = NA,
   .multi = "explode",
@@ -40,14 +40,13 @@ Any set to \code{NULL} are removed.}
 
 \item{retmode}{response format.}
 
-\item{cmd}{ELink command. If \code{NA} either \code{"neighbor"} or \code{"neighbour_history"} will
-be used based on the type of input.}
+\item{cmd}{ELink command.
+If \code{NA} either \code{"neighbor"} or \code{"neighbour_history"} will be used based on the
+type of input.}
 
-\item{.batch}{maximum number of UIDs to submit per request.
-For history server inputs, ELink is very fast.
-For explict ID lists, it tends to time out when requesting too many at once.
-\code{.batch} only applies when \code{id_set} is an explicit list.
-Set to \code{NULL} to prevent batching.}
+\item{.paginate}{maximum number of UIDs to submit per request.
+\code{.paginate} only applies when \code{id_set} is an explicit list.
+Set to \code{FALSE} to prevent batching.}
 
 \item{.process}{function that processes the API results.
 Can be a function or builtin processor as described in \code{\link{process}}.
@@ -62,14 +61,19 @@ request body instead of the URL.}
 
 \item{.multi}{controls how repeated params are handled (see \code{\link[httr2:req_url]{httr2::req_url_query()}}).}
 
-\item{.progress}{controls progress bar; see \code{progress} argument of \code{\link[httr2:req_perform_sequential]{httr2::req_perform_sequential}}.}
+\item{.progress}{controls progress bar; see the \code{progress} argument of
+\code{\link[httr2:req_perform_iterative]{httr2::req_perform_iterative()}}.}
 
 \item{.cookies}{path to persist cookies.
 If \code{NULL}, cookies are not added to the request.
 For helper functions: when \code{NA}, a temporary file is created (in this case only,
 the temporary file will be cleaned up once all requests are performed).}
 
+\item{.path}{path specification for saving raw responses.
+See \code{path} argument of \code{\link[httr2:req_perform_iterative]{httr2::req_perform_iterative()}}.}
+
 \item{.call}{call environment to use in error messages/traces.
+See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} argument of \code{\link[cli:cli_abort]{cli::cli_abort()}}.
 You only need to specify this in internal helper functions that don't need to be
 mentioned in error messages.}
 }

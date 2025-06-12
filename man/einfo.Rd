@@ -20,6 +20,7 @@ Any set to \code{NULL} are removed.}
 \item{version}{response format version.}
 
 \item{.call}{call environment to use in error messages/traces.
+See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} argument of \code{\link[cli:cli_abort]{cli::cli_abort()}}.
 You only need to specify this in internal helper functions that don't need to be
 mentioned in error messages.}
 }

@@ -12,7 +12,7 @@ check_id_set(id_set, database = NULL, call = rlang::caller_env())
 \item{database}{name of intended database.
 If \code{NULL} the database name is not checked.}
 
-\item{.call}{execution environment, for error reporting.
+\item{call}{execution environment, for error reporting.
 See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} argument of \code{\link[cli:cli_abort]{cli::cli_abort()}}.}
 }
 \value{

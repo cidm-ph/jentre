@@ -19,6 +19,7 @@ Collate:
     'fetch.R'
     'id_set.R'
     'info.R'
+    'jentre-package.R'
     'process.R'
     'link.R'
     'post.R'
@@ -29,6 +30,7 @@ Depends:
     R (>= 4.1.0)
 Imports: 
     cli,
+    glue,
     httr2,
     purrr,
     rlang,

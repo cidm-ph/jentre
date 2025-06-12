@@ -33,10 +33,12 @@
 #'   If `NULL`, cookies are not added to the request.
 #'   For helper functions: when `NA`, a temporary file is created (in this case only,
 #'   the temporary file will be cleaned up once all requests are performed).
-#' @param .verbose logical: when TRUE logs all API requests as messages.
+#' @param .verbose logical: when TRUE logs all API requests as messages in a compact format.
 #'   This uses a summarised format that does not include the request body for POST.
-#'   Use normal {httr} verbosity options to override and see more details.
+#'   Use normal httr verbosity controls (e.g. [`httr2::local_verbosity()`]) to override
+#'   this behaviour and see more details.
 #' @param .call call environment to use in error messages/traces.
+#'   See [rlang::topic-error-call] and the `call` argument of [cli::cli_abort()].
 #'   You only need to specify this in internal helper functions that don't need to be
 #'   mentioned in error messages.
 #' @return `httr2::request` object.

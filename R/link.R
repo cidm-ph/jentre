@@ -32,6 +32,8 @@
 #'     `NA` to use a sensible choice based on parameters.
 #' @param .progress controls progress bar; see the `progress` argument of
 #'   [`httr2::req_perform_iterative()`].
+#' @param .path path specification for saving raw responses.
+#'   See `path` argument of [`httr2::req_perform_iterative()`].
 #' @return concatenated output of `.process`.
 #'   For `elink(.process = "sets")` a data frame with columns
 #'   \describe{

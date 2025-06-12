@@ -66,9 +66,9 @@ iterate_body_form <- function(..., .multi = "error", .call = rlang::caller_env()
   batch_env <- environment()
   
   function(resp, req) {
-    values <- Map(\(x) unlist(head(x, n = 1)), params)
+    values <- Map(\(x) unlist(utils::head(x, n = 1)), params)
     if (sapply(values, length)[[1]] == 0) return(NULL)
-    remainder <- Map(\(x) tail(x, n = -1), params)
+    remainder <- Map(\(x) utils::tail(x, n = -1), params)
     assign("params", remainder, envir = batch_env)
     req_body_form_modify(req, !!!values, .multi = .multi, .call = .call)
   }

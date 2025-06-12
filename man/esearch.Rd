@@ -41,6 +41,8 @@ Ignored when \code{usehistory} is \code{TRUE}.}
 
 \item{retmode}{character: currently only \code{"xml"} is supported.}
 
+\item{rettype}{character: currently only \code{"uilist"} is supported.}
+
 \item{usehistory}{logical: when \code{TRUE} use the history server to return the result.}
 
 \item{WebEnv, query_key}{either characters to pass on as-is, or \code{\link{entrez_web_history}} objects.}
@@ -60,6 +62,7 @@ Ignored when \code{usehistory} is \code{TRUE}.}
 See \code{path} argument of \code{\link[httr2:req_perform_iterative]{httr2::req_perform_iterative()}}.}
 
 \item{.call}{call environment to use in error messages/traces.
+See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} argument of \code{\link[cli:cli_abort]{cli::cli_abort()}}.
 You only need to specify this in internal helper functions that don't need to be
 mentioned in error messages.}
 }
