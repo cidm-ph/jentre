@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eLinkResult PUBLIC "-//NLM//DTD elink 20101123//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20101123/elink.dtd">
+<eLinkResult>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>49004198</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>49004197</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>49004196</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>49004195</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>49004194</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>49004193</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>49004192</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>49004191</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>49004190</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>49004189</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>48980396</Id>
+    </IdList>
+    
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>48989857</Id>
+    </IdList>
+    <LinkSetDb>
+      <DbTo>bioproject</DbTo>
+      <LinkName>biosample_bioproject</LinkName>
+      
+        <Link>
+				<Id>1074779</Id>
+			</Link>
+      
+    </LinkSetDb>
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>48989856</Id>
+    </IdList>
+    <LinkSetDb>
+      <DbTo>bioproject</DbTo>
+      <LinkName>biosample_bioproject</LinkName>
+      
+        <Link>
+				<Id>1074779</Id>
+			</Link>
+      
+    </LinkSetDb>
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>48989855</Id>
+    </IdList>
+    <LinkSetDb>
+      <DbTo>bioproject</DbTo>
+      <LinkName>biosample_bioproject</LinkName>
+      
+        <Link>
+				<Id>1074779</Id>
+			</Link>
+      
+    </LinkSetDb>
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>48989854</Id>
+    </IdList>
+    <LinkSetDb>
+      <DbTo>bioproject</DbTo>
+      <LinkName>biosample_bioproject</LinkName>
+      
+        <Link>
+				<Id>1074779</Id>
+			</Link>
+      
+    </LinkSetDb>
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>48989853</Id>
+    </IdList>
+    <LinkSetDb>
+      <DbTo>bioproject</DbTo>
+      <LinkName>biosample_bioproject</LinkName>
+      
+        <Link>
+				<Id>1074779</Id>
+			</Link>
+      
+    </LinkSetDb>
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>48989852</Id>
+    </IdList>
+    <LinkSetDb>
+      <DbTo>bioproject</DbTo>
+      <LinkName>biosample_bioproject</LinkName>
+      
+        <Link>
+				<Id>1074779</Id>
+			</Link>
+      
+    </LinkSetDb>
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>48989851</Id>
+    </IdList>
+    <LinkSetDb>
+      <DbTo>bioproject</DbTo>
+      <LinkName>biosample_bioproject</LinkName>
+      
+        <Link>
+				<Id>1074779</Id>
+			</Link>
+      
+    </LinkSetDb>
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>48989850</Id>
+    </IdList>
+    <LinkSetDb>
+      <DbTo>bioproject</DbTo>
+      <LinkName>biosample_bioproject</LinkName>
+      
+        <Link>
+				<Id>1074779</Id>
+			</Link>
+      
+    </LinkSetDb>
+  </LinkSet>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>48989849</Id>
+    </IdList>
+    <LinkSetDb>
+      <DbTo>bioproject</DbTo>
+      <LinkName>biosample_bioproject</LinkName>
+      
+        <Link>
+				<Id>1074779</Id>
+			</Link>
+      
+    </LinkSetDb>
+  </LinkSet>
+</eLinkResult>
