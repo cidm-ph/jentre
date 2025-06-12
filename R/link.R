@@ -17,21 +17,21 @@
 #' @inheritParams entrez_request
 #' @param id_set ID set object.
 #' @param db target database name.
-#' @param cmd ELink command. If `NA` either `"neighbor"` or `"neighbour_history"` will
-#'   be used based on the type of input.
+#' @param cmd ELink command.
+#'   If `NA` either `"neighbor"` or `"neighbour_history"` will be used based on the
+#'   type of input.
 #' @param retmode response format.
-#' @param .batch maximum number of UIDs to submit per request.
-#'   For history server inputs, ELink is very fast.
-#'   For explict ID lists, it tends to time out when requesting too many at once.
-#'   `.batch` only applies when `id_set` is an explicit list.
-#'   Set to `NULL` to prevent batching.
+#' @param .paginate maximum number of UIDs to submit per request.
+#'   `.paginate` only applies when `id_set` is an explicit list.
+#'   Set to `FALSE` to prevent batching.
 #' @param .process function that processes the API results.
 #'   Can be a function or builtin processor as described in [`process`].
 #'   Additional builtin processors are available:
 #'     `"sets"` to get a data frame of ID set objects,
 #'     `"flat"` to get a data frame of UIDs, or
 #'     `NA` to use a sensible choice based on parameters.
-#' @param .progress controls progress bar; see `progress` argument of [`httr2::req_perform_sequential`].
+#' @param .progress controls progress bar; see the `progress` argument of
+#'   [`httr2::req_perform_iterative()`].
 #' @return concatenated output of `.process`.
 #'   For `elink(.process = "sets")` a data frame with columns
 #'   \describe{
@@ -54,7 +54,7 @@ elink <- function(
   ...,
   retmode = "xml",
   cmd = NA,
-  .batch = 100L,
+  .paginate = 100L,
   .process = NA,
   .method = NA,
   .multi = "explode",
@@ -80,6 +80,9 @@ elink <- function(
     }
   }
 
+  .paginate <- as.integer(.paginate)
+  if (is.entrez_id_list(id_set) && length(id_set) <= .paginate) .paginate <- 0L
+
   params <- rlang::list2(
     db = db,
     !!!id_params,
@@ -88,17 +91,17 @@ elink <- function(
     ...
   )
 
-  if (is.entrez_id_list(id_set) && !is.null(.batch)) {
+  if (is.entrez_id_list(id_set) && .paginate > 0L) {
     if (is.na(.cookies)) {
       .cookies <- tempfile()
       on.exit(if (file.exists(.cookies)) file.remove(.cookies), add = TRUE)
     }
 
-    sets <- split_id_list(id_set, max_per_batch = .batch)
+    sets <- split_id_list(id_set, max_per_batch = .paginate)
     params$id <- entrez_ids(sets[[1]])
     # FIXME warn if .method != "POST" to avoid surprises (or accomodate id existing in URL query)
     # FIXME if only 1 UID is provided it'll end up in the URL query anyway and error
-    req <- new_request(.endpoint, params, .method = "POST", .cookies = .cookies, .call = .call)
+    req <- new_request("elink.fcgi", params, .method = "POST", .cookies = .cookies, .call = .call)
 
     req |>
       httr2::req_perform_iterative(
@@ -174,7 +177,7 @@ elink_map <- function(
       }) |>
       purrr::list_rbind() |>
       tibble_cnv()
-      }
+  }
 }
 
 # from - entrez_id_list
@@ -219,6 +222,8 @@ process_xml_LinkSet_df_one_to_one <- function(doc) {
     id_to = links |> xml_find_all("./Link/Id", flatten = FALSE) |> purrr::map(xml_text),
   )
 }
+# example one-to-one
+# xo2o <- xml2::read_xml("<eLinkResult><LinkSet><DbFrom>protein</DbFrom><IdList><Id>15718680</Id></IdList><LinkSetDb><DbTo>gene</DbTo><LinkName>protein_gene</LinkName><Link><Id>3702</Id></Link></LinkSetDb></LinkSet><LinkSet><DbFrom>protein</DbFrom><IdList><Id>157427902</Id></IdList><LinkSetDb><DbTo>gene</DbTo><LinkName>protein_gene</LinkName><Link><Id>522311</Id></Link></LinkSetDb></LinkSet></eLinkResult>")
 
 process_xml_LinkSet_df_many_to_many <- function(doc) {
   links <- xml_find_all(doc, "LinkSet/LinkSetDb")

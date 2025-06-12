@@ -24,7 +24,8 @@ raise_xml_error <- function(doc, call = rlang::caller_env()) {
   doc
 }
 
-entrez_id_params <- function(id_set) {
+entrez_id_params <- function(id_set, call = rlang::caller_env()) {
+  check_id_set(id_set, call = call)
   if (is.entrez_id_list(id_set)) {
     list(db = id_set$database, id = id_set$ids)
   } else if (is.entrez_web_history(id_set)) {
@@ -80,8 +81,6 @@ path_glue_dummy <- function(path) {
   if (is.null(path)) {
     NULL
   } else {
-    glue_env <- new.env(parent = emptyenv())
-    glue_env$i <- 1L
-    glue::glue(path, .envir = glue_env)
+    glue::glue(path, .envir = emptyenv(), i = 1L)
   }
 }
