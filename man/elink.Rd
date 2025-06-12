@@ -41,7 +41,7 @@ Any set to \code{NULL} are removed.}
 \item{retmode}{response format.}
 
 \item{cmd}{ELink command.
-If \code{NA} either \code{"neighbor"} or \code{"neighbour_history"} will be used based on the
+If \code{NA} either \code{"neighbor"} or \code{"neighbor_history"} will be used based on the
 type of input.}
 
 \item{.paginate}{maximum number of UIDs to submit per request.

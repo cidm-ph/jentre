@@ -18,7 +18,7 @@
 #' @param id_set ID set object.
 #' @param db target database name.
 #' @param cmd ELink command.
-#'   If `NA` either `"neighbor"` or `"neighbour_history"` will be used based on the
+#'   If `NA` either `"neighbor"` or `"neighbor_history"` will be used based on the
 #'   type of input.
 #' @param retmode response format.
 #' @param .paginate maximum number of UIDs to submit per request.
@@ -109,7 +109,7 @@ elink <- function(
       httr2::req_perform_iterative(
         next_req = iterate_body_form(
           id = Map(entrez_ids, sets[2:length(sets)]),
-          .multi = "comma",
+          .multi = .multi,
           .call = .call
         ),
         path = .path,
@@ -234,7 +234,7 @@ process_xml_LinkSet_df_many_to_many <- function(doc) {
     id_from = doc |> xml_find_all("/eLinkResult/LinkSet/IdList/Id") |> xml_text() |> list(),
     db_to = links |> xml_find_all("./DbTo") |> xml_text(),
     linkname = links |> xml_find_all("./LinkName") |> xml_text(),
-    id_to = links |> xml_find_all("./Link/Id") |> xml_text(),
+    id_to = links |> xml_find_all("./Link/Id", flatten = FALSE) |> purrr::map(xml_text),
   )
 }
 # example many-to-many
