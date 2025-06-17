@@ -2,21 +2,40 @@
 % Please edit documentation in R/id_set.R
 \name{check_id_set}
 \alias{check_id_set}
+\alias{check_id_list}
+\alias{check_web_history}
+\alias{entrez_database}
 \title{Check ID set is well formed}
 \usage{
-check_id_set(id_set, database = NULL, call = rlang::caller_env())
+check_id_set(
+  x,
+  database = NULL,
+  arg = rlang::caller_arg(x),
+  call = rlang::caller_env()
+)
+
+check_id_list(x, arg = rlang::caller_arg(x), call = rlang::caller_env())
+
+check_web_history(x, arg = rlang::caller_arg(x), call = rlang::caller_env())
+
+entrez_database(x)
 }
 \arguments{
-\item{id_set}{ID set object.}
+\item{x}{ID set object.}
 
 \item{database}{name of intended database.
 If \code{NULL} the database name is not checked.}
+
+\item{arg}{name of argument to use in error reporting.}
 
 \item{call}{execution environment, for error reporting.
 See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} argument of \code{\link[cli:cli_abort]{cli::cli_abort()}}.}
 }
 \value{
-\code{id_set}. This function raises an error if any check fails.
+\itemize{
+\item For \verb{check_*}, these function raise an error if the check fails.
+\item For \code{entrez_database()} the name of the database.
+}
 }
 \description{
 Check ID set is well formed

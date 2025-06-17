@@ -1,155 +1,211 @@
-#' Entrez identifier lists
+#' @import vctrs
+NULL
+
+#' Entrez identifier sets
 #' 
 #' Many Entrez APIs accept either a UID list or tokens that point to a result stored
-#' on its history server. The S3 classes here wrap these and keep track of the
+#' on its history server. The classes here wrap these and keep track of the
 #' database name that the identifiers belong to. Most of the API helpers in this
 #' package are generic over the type of ID set and so can be used the same way with
 #' either type. For large numbers of UIDs, the web history versions are generally
 #' recommended to avoid running into server-side request timeouts.
 #' 
-#' `entrez_id_list` can be sliced and indexed like a vector (e.g. `id_set[1:10]` or
+#' `id_list` is a vector and can be manipulated to take subsets (e.g. `id_set[1:10]` or
 #' `tail(id_set)`).
 #' 
-#' `entrez_web_history` is an opaque reference to an object stored on the Entrez
-#' history server. Unless the length is known at the time the object is
-#' constructed, it will be missing.
+#' `web_history` is an opaque reference to an ID list stored on the Entrez
+#' history server. Through the course of API calls, information about the length or
+#' the actual list of IDs may be discovered and cached, avoiding subsequent API calls.
+#' `as_id_list()` can be used to extract the list of IDs.
 #' 
-#' Convert `entrez_id_list` to `entrez_web_history` with [`epost()`].
+#' Convert `id_list` to `web_history` with [`epost()`].
+#' Convert `web_history` to `id_list` with `as_id_list()`.
 #' 
-#' Convert `entrez_web_history` to `entrez_id_list` with [`entrez_translate()`].
-#' 
-#' @rdname entrez_id_set
+#' @rdname id_set
 #' @param db name of the associated Entrez database (e.g. `"biosample"`).
 #' @param ids UIDs, coercible to a character vector (can be accessions or GI numbers).
+#' @seealso [`entrez_translate()`] and [`entrez_count()`]
+#' @returns
+#'  * For `id_list()` and `as_id_list()` an `id_list` vector.
+#'  * For `web_history()` a `web_history` object.
+#'  * For `is_id_set()`, `is_id_list()`, and `is_web_history()` a logical.
 #' @export
-entrez_id_list <- function(db, ids) {
-  structure(
-    list(database = db, ids = as.character(ids)),
-    class = c("entrez_id_list", "entrez_id_set")
+id_list <- function(db, ids = character()) {
+  ids <- vctrs::vec_cast(ids, character())
+  stopifnot(!anyNA(ids), !is.na(db))
+  new_id_list(db, ids)
+}
+new_id_list <- function(db, ids = character()) {
+  vctrs::new_vctr(
+    ids,
+    database = db,
+    class = c("jentre_id_list", "jentre_id_set")
   )
 }
-# TODO use vctrs to make these proper vector classes
 
-#' @rdname entrez_id_set
-#' @param query_key,WebEnv history server tokens returned by another Entrez API call
-#' @param length number of UIDs in the set, if known
+#' @rdname id_set
+#' @param query_key,WebEnv history server tokens returned by another Entrez API call.
+#' @param length number of UIDs in the set, if known.
 #' @export
-entrez_web_history <- function(db, query_key, WebEnv, length = NA) {
-  structure(
-    list(database = db, query_key = query_key, WebEnv = WebEnv, length = length),
-    class = c("entrez_web_history", "entrez_id_set")
+web_history <- function(db, WebEnv, query_key, length = NA) {
+  stopifnot(!anyNA(WebEnv), !anyNA(query_key), !is.na(db))
+  query_key <- as.integer(query_key)
+  x <- vctrs::vec_recycle_common(WebEnv, query_key, length)
+  vctrs::list_check_all_size(x, 1)
+  new_web_history(db, x[[1]], x[[2]], x[[3]])
+}
+new_web_history <- function(db, WebEnv, query_key, length = NA) {
+  x <- vctrs::new_rcrd(
+    list(
+      WebEnv = WebEnv,
+      query_key = query_key
+    ),
+    database = db,
+    data = new.env(parent = emptyenv()),
+    class = c("jentre_web_history", "jentre_id_set")
   )
+
+  if (!is.na(length)) wh_len_set(x, length)
+
+  x
 }
 
-#' @rdname entrez_id_set
-#' @param x object to test.
+#' @rdname id_set
+#' @param x object to test or convert.
 #' @export
-is.entrez_id_set <- function(x) inherits(x, "entrez_id_set")
+is_id_set <- function(x) inherits(x, "jentre_id_set")
+#' @rdname id_set
+#' @export
+is_id_list <- function(x) inherits(x, "jentre_id_list")
+#' @rdname id_set
+#' @export
+is_web_history <- function(x) inherits(x, "jentre_web_history")
+#' @export
 
-#' @rdname entrez_id_set
+vec_ptype_full.jentre_id_list <- function(x, ...) paste0("entrez/", attr(x, "database"))
 #' @export
-is.entrez_id_list <- function(x) inherits(x, "entrez_id_list")
-
-#' @rdname entrez_id_set
+vec_ptype_abbr.jentre_id_list <- function(x, ...) "idlst"
 #' @export
-is.entrez_web_history <- function(x) inherits(x, "entrez_web_history")
-
-#' @rdname entrez_id_set
-#' @param id_set ID set object.
-#' @export
-entrez_ids <- function(id_set) UseMethod("entrez_ids")
-
-#' @rdname entrez_id_set
-#' @export
-entrez_database <- function(id_set) UseMethod("entrez_database")
-
-#' @export
-length.entrez_id_list <- function(x) length(x$ids)
-
-#' @export
-mtfrm.entrez_id_list <- function(x) x$ids
-
-#' @export
-format.entrez_id_list <- function(x, ...) {
-  paste0("<entrez/", x$database, " [", length(x$ids), " UIDs]>")
-}
-#' @export
-print.entrez_id_list <- function(x, ...) {
-  cat(format(x, ...))
+format.jentre_id_list <- function(x, ...) {
+  format(vctrs::vec_data(x))
 }
 
+il_ids_get <- function(x) vctrs::vec_data(x)
+
 #' @export
-format.entrez_web_history <- function(x, ...) {
-  len <- x$length
-  if (is.na(len)) len <- "?"
-  wenv <- x$WebEnv
-  wenv <- substr(wenv, nchar(wenv) - 4, nchar(wenv))
-  paste0("<entrez@/", x$database, " ", wenv, "#", x$query_key, " [", len, " UIDs]>")
+vec_ptype_full.jentre_web_history <- function(x, ...) paste0("entrez@/", attr(x, "database"))
+#' @export
+vec_ptype_abbr.jentre_web_history <- function(x, ...) "wbhst"
+#' @export
+format.jentre_web_history <- function(x, ...) {
+  env <- abbreviate(vctrs::field(x, "WebEnv"))
+  keys <- vctrs::field(x, "query_key")
+  lens <- wh_len_get(x)
+  lens[is.na(lens)] <- "?"
+  format(paste0(env, "#", keys, "[", lens, "]"))
 }
-#' @export
-print.entrez_web_history <- function(x, ...) {
-  cat(format(x, ...))
+
+wh_webenv <- function(x) vctrs::field(x, "WebEnv")
+wh_qrykey <- function(x) vctrs::field(x, "query_key")
+wh_ids_set <- function(x, ids) {
+  stopifnot(is_web_history(x))
+  rlang::env_poke(attr(x, "data"), "ids", ids)
 }
-
-#' @export
-entrez_ids.entrez_id_list <- function(id_set) id_set$ids
-
-#' @export
-entrez_database.entrez_id_list <- function(id_set) id_set$database
-
-#' @export
-`[.entrez_id_list` <- function(x, i, ...) {
-  entrez_id_list(x$database, x$ids[i, ...])
+wh_ids_get <- function(x) {
+  rlang::env_cache(attr(x, "data"), "ids", NULL)
+}
+wh_len_set <- function(x, length) {
+  stopifnot(is_web_history(x))
+  rlang::env_poke(attr(x, "data"), "len", length)
+}
+wh_len_get <- function(x) {
+  rlang::env_cache(attr(x, "data"), "len", NA_integer_)
 }
 
 #' @export
-`[[.entrez_id_list` <- function(x, i, ...) {
-  entrez_id_list(x$database, x$ids[[i, ...]])
+vec_ptype2.jentre_id_list.jentre_id_list <- function(x, y, ...) {
+  check_compatible_db(x, y, call = rlang::caller_env())
+  new_id_list(entrez_database(x))
 }
 
-#' @export
-entrez_database.entrez_web_history <- function(id_set) id_set$database
-
-#' @export
-length.entrez_web_history <- function(x) x$length
+check_compatible_db <- function(
+  x,
+  y,
+  ...,
+  x_arg = rlang::caller_arg(x),
+  y_arg = rlang::caller_arg(y)
+) {
+  if (entrez_database(x) != entrez_database(y)) {
+    vctrs::stop_incompatible_type(x, y, ..., x_arg = x_arg, y_arg = y_arg)
+  }
+}
 
 #' Check ID set is well formed
 #' 
-#' @param id_set ID set object.
+#' @param x ID set object.
 #' @param database name of intended database.
 #'   If `NULL` the database name is not checked.
 #' @param call execution environment, for error reporting.
 #'   See [rlang::topic-error-call] and the `call` argument of [cli::cli_abort()].
-#' @return `id_set`. This function raises an error if any check fails.
+#' @param arg name of argument to use in error reporting.
+#' @return
+#'  * For `check_*`, these function raise an error if the check fails.
+#'  * For `entrez_database()` the name of the database.
 #' @export
-check_id_set <- function(id_set, database = NULL, call = rlang::caller_env()) {
+check_id_set <- function(
+  x,
+  database = NULL,
+  arg = rlang::caller_arg(x),
+  call = rlang::caller_env()
+) {
+  if (!is_id_set(x)) {
+    cli::cli_abort(
+      "{.arg {arg}} must be an id set, not {.obj_type_friendly {x}}.",
+      call = call
+    )
+  }
+
   if (!is.null(database)) {
-    actual_db <- entrez_database(id_set) 
+    actual_db <- entrez_database(x) 
     if (database != actual_db) {
       cli::cli_abort(c(
-        "ID set provided belongs to a different Entrez database",
+        "{.arg {arg}} is an ID set from the wrong Entrez database",
         "x" = "ID set {.emph {format(id_set)}} is not from database {.field {database}}"
       ), call = call)
     }
   }
-
-  if (is.entrez_id_list(id_set)) {
-    if (is.na(id_set$database)) cli::cli_abort("{.param database} cannot be {.val NA}", call = call)
-    if (any(is.na(id_set$ids))) cli::cli_abort("{.val NA} UIDs", call = call)
-  }
-  if (is.entrez_web_history(id_set)) {
-    if (is.na(id_set$database)) cli::cli_abort("{.param database} cannot be {.val NA}", call = call)
-    if (is.na(id_set$WebEnv)) cli::cli_abort("{.param WebEnv} cannot be {.val NA}", call = call)
-    if (is.na(id_set$query_key)) cli::cli_abort("{.param query_key} cannot be {.val NA}", call = call)
-  }
-
-  id_set
 }
-
-compute_n_items <- function(id_set, call = rlang::caller_env()) {
-  n_items <- length(id_set)
-  if (is.entrez_web_history(id_set) && is.na(n_items)) {
-    n_items <- entrez_count(id_set, .call = call)
+#' @rdname check_id_set
+#' @export
+check_id_list <- function(
+  x,
+  arg = rlang::caller_arg(x),
+  call = rlang::caller_env()
+) {
+  if (!is_id_list(x)) {
+    cli::cli_abort(
+      "{.arg {arg}} must be an id list, not {.obj_type_friendly {x}}.",
+      call = call
+    )
   }
-  n_items
+}
+#' @rdname check_id_set
+#' @export
+check_web_history <- function(
+  x,
+  arg = rlang::caller_arg(x),
+  call = rlang::caller_env()
+) {
+  if (!is_web_history(x)) {
+    cli::cli_abort(
+      "{.arg {arg}} must be a web history, not {.obj_type_friendly {x}}.",
+      call = call
+    )
+  }
+}
+#' @rdname check_id_set
+#' @export
+entrez_database <- function(x) {
+  check_id_set(x)
+  attr(x, "database")
 }
