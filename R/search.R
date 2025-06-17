@@ -26,7 +26,7 @@
 #' @param .path path specification for saving raw responses.
 #'   See `path` argument of [`httr2::req_perform_iterative()`].
 #' @inheritParams entrez_request
-#' @return id set object (either a web history token or explicit list).
+#' @return id set object (either a [`web_history`] or an [`id_list`]).
 #' @seealso <https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESearch>
 #' @export
 esearch <- function(
@@ -42,18 +42,11 @@ esearch <- function(
   query_key = NULL,
   .cookies = NA,
   .paginate = 10000L,
+  .progress = "ESearch",
   .path = NULL,
-  .call = rlang::current_env()
+  .call = current_env()
 ) {
   force(usehistory)
-
-  if (is.na(.cookies)) {
-    .cookies <- tempfile()
-    on.exit(if (file.exists(.cookies)) file.remove(.cookies), add = TRUE)
-  }
-
-  if (!is.null(WebEnv) && is.entrez_web_history(WebEnv)) WebEnv <- WebEnv$WebEnv
-  if (!is.null(query_key) && is.entrez_web_history(query_key)) query_key <- query_key$query_key
 
   if (retmode != "xml") {
     cli::cli_abort("Currently only XML format is supported", call = .call)
@@ -65,7 +58,7 @@ esearch <- function(
   .paginate <- as.integer(.paginate)
   if (!is.null(retmax) && !is.na(retmax) && retmax <= .paginate) .paginate <- 0L
 
-  params <- rlang::list2(
+  params <- list2(
     db = db,
     term = term,
     retstart = retstart,
@@ -73,8 +66,7 @@ esearch <- function(
     retmax = retmax,
     rettype = rettype,
     usehistory = if (usehistory) "y" else NULL,
-    WebEnv = WebEnv,
-    query_key = query_key,
+    !!!webhist_params(WebEnv = WebEnv, query_key = query_key),
     ...
   )
 
@@ -82,16 +74,11 @@ esearch <- function(
     params$retstart <- NULL
     params$retmax <- NULL
     req <- new_request("esearch.fcgi", params, .cookies = .cookies, .call = .call)
-    doc <-
-      httr2::req_perform(req, path = path_glue_dummy(.path)) |>
-      parse_response("xml", call = .call)
-    check_xml_root(doc, "eSearchResult")
-    entrez_web_history(
-      db = db,
-      query_key = doc |> xml_find_first("/eSearchResult/QueryKey") |> xml_text(),
-      WebEnv = doc |> xml_find_first("/eSearchResult/WebEnv") |> xml_text(),
-      length = doc |> xml_find_first("/eSearchResult/Count") |> xml2::xml_integer()
-    )
+    httr2::req_perform(req, path = path_glue_dummy(.path)) |>
+      parse_response("xml", call = .call) |>
+      check_xml_eSearchResult() |>
+      inform_xml_eSearchResult() |>
+      process_response(fn = process_xml_eSearchResult_webhist(db), call = .call)
   } else if (.paginate == 0L) {
     if (is.na(retmax)) {
       cli::cli_abort("{.arg retmax} cannot be {.val NA} when pagination is disabled", call = .call)
@@ -100,10 +87,16 @@ esearch <- function(
     ids <-
       httr2::req_perform(req, path = path_glue_dummy(.path)) |>
       parse_response("xml", call = .call) |>
-      check_xml_eSearchResult(call = .call) |>
+      check_xml_eSearchResult() |>
+      inform_xml_eSearchResult() |>
       process_response(fn = process_xml_eSearchResult_uilist, call = .call)
-    entrez_id_list(db, ids)
+    id_list(db, ids)
   } else {
+    if (is.na(.cookies)) {
+      .cookies <- tempfile()
+      on.exit(if (file.exists(.cookies)) file.remove(.cookies), add = TRUE)
+    }
+
     params$retmax <- .paginate
     req <- new_request("esearch.fcgi", params, .cookies = .cookies, .call = .call)
     ids <-
@@ -112,7 +105,7 @@ esearch <- function(
         max_reqs = if (is.na(retmax)) Inf else ceiling((retmax - retstart) / .paginate),
         path = .path,
         on_error = "return",
-        progress = "ESearch",
+        progress = .progress,
         next_req = httr2::iterate_with_offset(
           param_name = "retstart",
           start = retstart,
@@ -120,7 +113,6 @@ esearch <- function(
           resp_pages = function(resp) {
             n_items <- if (is.na(retmax)) {
               parse_response(resp, "xml", call = call) |>
-                check_xml_eSearchResult(call = .call) |>
                 process_response(fn = process_xml_eSearchResult_count, call = .call)
             } else {
               retmax - retstart
@@ -130,60 +122,55 @@ esearch <- function(
         )
       ) |>
       httr2::resps_successes() |>
-      httr2::resps_data(function(resp) {
-        parse_response(resp, "xml", call = .call) |>
-          process_response(fn = process_xml_eSearchResult_uilist, call = .call)
-      })
+      httr2::resps_data(search_resps_data(.call))
     
-    entrez_id_list(db, ids)
+    id_list(db, ids)
   }
 }
 
-#' Count entries on the history server without returning them
-#'
-#' @family API methods
-#' @param id_set an `entrez_web_history` object.
-#' @return integer number of entries.
-#' @inheritParams esearch
-#' @export
-entrez_count <- function(id_set, .call = rlang::caller_env()) {
-  stopifnot(is.entrez_web_history(id_set))
-
-  params <- rlang::list2(
-    db = entrez_database(id_set),
-    term = "",
-    retmode = "xml",
-    rettype = "count",
-    WebEnv = id_set$WebEnv,
-    query_key = id_set$query_key
-  )
-  req <- new_request("esearch.fcgi", params, .call = .call)
-
-  req |>
-    httr2::req_perform() |>
-    parse_response("xml", call = .call) |>
-    process_xml_eSearchResult_count()
+search_resps_data <- function(.call) {
+  env <- environment()
+  function(resp) {
+    doc <- parse_response(resp, "xml", call = .call) |>
+      check_xml_eSearchResult()
+    if (rlang::env_cache(env, ".first", TRUE)) {
+      rlang::env_poke(env, ".first", FALSE)
+      inform_xml_eSearchResult(doc)
+    }
+    process_response(doc, fn = process_xml_eSearchResult_uilist, call = .call)
+  }
 }
 
-check_xml_eSearchResult <- function(doc, call = rlang::caller_env()) {
-  check_xml_root(doc, "eSearchResult", call = call)
+check_xml_eSearchResult <- function(doc) {
+  check_xml_root(doc, "eSearchResult", call = caller_env())
 
-  errors <- xml_find_all(doc, "//ErrorList/*")
-  if (length(errors) > 0) {
-    errors <- paste0("{.field ", xml2::xml_name(errors), "}: ", xml_text(errors))
-    errors <- setNames(errors, rep("x", length(errors)))
-  } else {
-    errors <- c()
+  for (error in xml_find_all(doc, "//ErrorList/*")) {
+    cli::cli_alert_danger("{.field eSearch} {.field {xml2::xml_name(error)}}: {xml_text(error)}", class = "esearch_error")
   }
-  warnings <- xml_find_all(doc, "//WarningList/OutputMessage") |> xml_text()
-  warnings <- setNames(warnings, rep("!", length(warnings)))
-  msg <- c(errors, warnings)
-  
-  if (length(msg) > 0 ) {
-    cli::cli_warn(c("eSearch returned messages", msg))
+  for (warning in xml_find_all(doc, "//WarningList/OutputMessage")) {
+    cli::cli_alert_warning("{.field eSearch} {xml_text(warning)}", class = "esearch_warning")
   }
 
   invisible(doc)
+}
+
+inform_xml_eSearchResult <- function(doc) {
+  count <- xml_find_first(doc, "/eSearchResult/Count") |> xml2::xml_integer()
+  translation <- xml_find_first(doc, "//QueryTranslation") |> xml_text()
+  cli::cli_alert_info("{.field eSearch} query {.val {translation}} has {.strong {count}} results", class = "esearch_info")
+
+  invisible(doc)
+}
+
+process_xml_eSearchResult_webhist <- function(db) {
+  function(doc) {
+    web_history(
+      db = db,
+      query_key = doc |> xml_find_first("/eSearchResult/QueryKey") |> xml_text(),
+      WebEnv = doc |> xml_find_first("/eSearchResult/WebEnv") |> xml_text(),
+      length = doc |> xml_find_first("/eSearchResult/Count") |> xml2::xml_integer()
+    )
+  }
 }
 
 process_xml_eSearchResult_count <- function(doc) {

@@ -1,4 +1,4 @@
-#' @importFrom rlang !!!
+#' @importFrom rlang !!! list2 current_env caller_env
 NULL
 
 parse_response <- function(resp, retmode, ..., errors = TRUE, call = rlang::caller_env()) {
@@ -91,3 +91,35 @@ path_glue_dummy <- function(path) {
     glue::glue(path, .envir = emptyenv(), i = 1L)
   }
 }
+
+check_arg <- function(test, what) {
+  function(
+    x,
+    ...,
+    allow_na = TRUE,
+    allow_null = FALSE,
+    arg = rlang::caller_arg(x),
+    call = rlang::caller_env()
+  ) {
+    if (!missing(x)) {
+      if (test(x)) {
+        if (!allow_na && any(is.na(x))) {
+          cli::cli_abort("{.arg {arg}} can't contain NA values.", call = call)
+        }
+        return(invisible(NULL))
+      }
+      if (allow_null && rlang::is_null(x)) {
+        return(invisible(NULL))
+      }
+    }
+
+    what <- list(what)
+    if (allow_na) what[length(what) + 1] <- "`NA`"
+    if (allow_null) what[length(what) + 1] <- "`NULL`"
+    cli::cli_abort("{.arg {arg}} must be {.or {what}}, not {.obj_type_friendly {x}}.", ..., call = call)
+  }
+}
+
+check_character <- check_arg(rlang::is_character, "a character vector")
+check_scalar_character <- check_arg(rlang::is_scalar_character, "a character scalar")
+check_scalar_integer <- check_arg(rlang::is_scalar_integer, "a scalar integer")

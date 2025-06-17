@@ -11,7 +11,9 @@ resp_get <- function(path, status_code = 200, content_type = "application/xml") 
   )
 }
 
-replay_requests <- function(paths, env = rlang::caller_env()) {
+replay_requests <- function(..., env = rlang::caller_env()) {
+  rlang::check_dots_unnamed()
+  paths <- rlang::list2(...)
   resps <- Map(resp_get, paths)
   httr2::local_mocked_responses(resps, env = env)
 }

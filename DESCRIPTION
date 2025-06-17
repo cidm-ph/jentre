@@ -35,7 +35,7 @@ Imports:
     glue,
     httr2,
     purrr,
-    rlang,
+    rlang (>= 1.1.0),
     vctrs,
     xml2
 Suggests: 

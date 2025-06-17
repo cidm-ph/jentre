@@ -17,8 +17,9 @@ esearch(
   query_key = NULL,
   .cookies = NA,
   .paginate = 10000L,
+  .progress = "ESearch",
   .path = NULL,
-  .call = rlang::current_env()
+  .call = current_env()
 )
 }
 \arguments{
@@ -67,7 +68,7 @@ You only need to specify this in internal helper functions that don't need to be
 mentioned in error messages.}
 }
 \value{
-id set object (either a web history token or explicit list).
+id set object (either a \code{\link{web_history}} or an \code{\link{id_list}}).
 }
 \description{
 The search term field names are documented in the EInfo API endpoint:
@@ -80,7 +81,6 @@ Other API methods:
 \code{\link{efetch}()},
 \code{\link{einfo}()},
 \code{\link{elink}()},
-\code{\link{entrez_count}()},
 \code{\link{entrez_translate}()},
 \code{\link{epost}()},
 \code{\link{esummary}()}
