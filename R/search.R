@@ -100,6 +100,7 @@ esearch <- function(
     ids <-
       httr2::req_perform(req, path = path_glue_dummy(.path)) |>
       parse_response("xml", call = .call) |>
+      check_xml_eSearchResult(call = .call) |>
       process_response(fn = process_xml_eSearchResult_uilist, call = .call)
     entrez_id_list(db, ids)
   } else {
@@ -119,6 +120,7 @@ esearch <- function(
           resp_pages = function(resp) {
             n_items <- if (is.na(retmax)) {
               parse_response(resp, "xml", call = call) |>
+                check_xml_eSearchResult(call = .call) |>
                 process_response(fn = process_xml_eSearchResult_count, call = .call)
             } else {
               retmax - retstart
@@ -163,15 +165,34 @@ entrez_count <- function(id_set, .call = rlang::caller_env()) {
     process_xml_eSearchResult_count()
 }
 
+check_xml_eSearchResult <- function(doc, call = rlang::caller_env()) {
+  check_xml_root(doc, "eSearchResult", call = call)
+
+  errors <- xml_find_all(doc, "//ErrorList/*")
+  if (length(errors) > 0) {
+    errors <- paste0("{.field ", xml2::xml_name(errors), "}: ", xml_text(errors))
+    errors <- setNames(errors, rep("x", length(errors)))
+  } else {
+    errors <- c()
+  }
+  warnings <- xml_find_all(doc, "//WarningList/OutputMessage") |> xml_text()
+  warnings <- setNames(warnings, rep("!", length(warnings)))
+  msg <- c(errors, warnings)
+  
+  if (length(msg) > 0 ) {
+    cli::cli_warn(c("eSearch returned messages", msg))
+  }
+
+  invisible(doc)
+}
+
 process_xml_eSearchResult_count <- function(doc) {
-  check_xml_root(doc, "eSearchResult")
   doc |> 
     xml_find_first("/eSearchResult/Count") |>
     xml2::xml_integer()
 }
 
 process_xml_eSearchResult_uilist <- function(doc) {
-  check_xml_root(doc, "eSearchResult")
   doc |>
     xml_find_all("/eSearchResult/IdList/Id") |>
     xml_text()
