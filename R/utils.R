@@ -26,13 +26,20 @@ raise_xml_error <- function(doc, call = rlang::caller_env()) {
 
 entrez_id_params <- function(id_set, call = rlang::caller_env()) {
   check_id_set(id_set, call = call)
-  if (is.entrez_id_list(id_set)) {
-    list(db = id_set$database, id = id_set$ids)
-  } else if (is.entrez_web_history(id_set)) {
-    list(db = id_set$database, query_key = id_set$query_key, WebEnv = id_set$WebEnv)
+  if (is_id_list(id_set)) {
+    list(db = entrez_database(id_set), id = il_ids_get(id_set))
+  } else if (is_web_history(id_set)) {
+    list(db = entrez_database(id_set), query_key = wh_qrykey(id_set), WebEnv = wh_webenv(id_set))
   } else {
     stop(paste0("Unimplemented for ", class(id_set)))
   }
+}
+
+webhist_params <- function(WebEnv = NULL, query_key = NULL, call = rlang::caller_env()) {
+  if (!is.null(WebEnv) && is_web_history(WebEnv)) WebEnv <- wh_webenv(WebEnv)
+  if (!is.null(query_key) && is_web_history(query_key)) query_key <- wh_qrykey(query_key)
+
+  list(WebEnv = WebEnv, query_key = query_key)
 }
 
 split_id_list <- function(id_set, max_per_batch) {
