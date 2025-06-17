@@ -2,11 +2,6 @@
 # Copyright notice (https://www.ncbi.nlm.nih.gov/About/disclaimer.html)
 # must be evident to users of your product.
 
-# FIXME To register tool and email values, simply send an e-mail to
-#                     eutilities@ncbi.nlm.nih.gov
-# including the desired values along with the name of either a developer or the
-# organization creating the software.
-
 #' Construct a request to the Entrez API
 #' 
 #' This is a low-level helper that builds a request object but does not
