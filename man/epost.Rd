@@ -4,7 +4,7 @@
 \alias{epost}
 \title{Register UIDs with the Entrez history server}
 \usage{
-epost(id_set, ..., WebEnv = NULL, .call = rlang::current_env())
+epost(id_set, ..., WebEnv = NULL, .path = NULL, .call = rlang::current_env())
 }
 \arguments{
 \item{id_set}{an \code{\link{entrez_id_list}} object.}
@@ -13,6 +13,8 @@ epost(id_set, ..., WebEnv = NULL, .call = rlang::current_env())
 Any set to \code{NULL} are removed.}
 
 \item{WebEnv}{either a character to pass on as-is, or an \code{\link{entrez_web_history}} object.}
+
+\item{.path}{path specification for saving raw responses.}
 
 \item{.call}{call environment to use in error messages/traces.
 See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} argument of \code{\link[cli:cli_abort]{cli::cli_abort()}}.
@@ -27,7 +29,6 @@ Other API methods:
 \code{\link{efetch}()},
 \code{\link{einfo}()},
 \code{\link{elink}()},
-\code{\link{entrez_count}()},
 \code{\link{entrez_translate}()},
 \code{\link{esearch}()},
 \code{\link{esummary}()}
