@@ -40,5 +40,6 @@ Imports:
     xml2
 Suggests: 
     testthat (>= 3.0.0),
-    tibble
+    tibble,
+    withr
 Config/testthat/edition: 3

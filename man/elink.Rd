@@ -18,17 +18,10 @@ elink(
   .progress = TRUE,
   .cookies = NA,
   .path = NULL,
-  .call = rlang::current_env()
+  .call = current_env()
 )
 
-elink_map(
-  id_set,
-  db,
-  ...,
-  .cookies = NA,
-  .path = NULL,
-  .call = rlang::current_env()
-)
+elink_map(id_set, db, ..., .cookies = NA, .path = NULL, .call = current_env())
 }
 \arguments{
 \item{id_set}{ID set object.}
@@ -114,7 +107,6 @@ several API requests to achieve the result.
 Other API methods: 
 \code{\link{efetch}()},
 \code{\link{einfo}()},
-\code{\link{entrez_count}()},
 \code{\link{entrez_translate}()},
 \code{\link{epost}()},
 \code{\link{esearch}()},

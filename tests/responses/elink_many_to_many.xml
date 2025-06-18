@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eLinkResult PUBLIC "-//NLM//DTD elink 20101123//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20101123/elink.dtd">
+<eLinkResult>
+
+  <LinkSet>
+    <DbFrom>biosample</DbFrom>
+    <IdList>
+      <Id>34720681</Id>
+      <Id>34720682</Id>
+      <Id>34720683</Id>
+      <Id>34720684</Id>
+      <Id>45830304</Id>
+      <Id>45830305</Id>
+      <Id>46785173</Id>
+      <Id>47127516</Id>
+      <Id>47209304</Id>
+      <Id>48154520</Id>
+    </IdList>
+    <LinkSetDb>
+      <DbTo>bioproject</DbTo>
+      <LinkName>biosample_bioproject</LinkName>
+      
+        <Link>
+				<Id>1256016</Id>
+			</Link>
+        <Link>
+				<Id>1231393</Id>
+			</Link>
+        <Link>
+				<Id>1229280</Id>
+			</Link>
+        <Link>
+				<Id>1222596</Id>
+			</Link>
+        <Link>
+				<Id>1198110</Id>
+			</Link>
+        <Link>
+				<Id>967744</Id>
+			</Link>
+        <Link>
+				<Id>224116</Id>
+			</Link>
+      
+    </LinkSetDb>
+  </LinkSet>
+</eLinkResult>

@@ -63,7 +63,7 @@ elink <- function(
   .progress = TRUE,
   .cookies = NA,
   .path = NULL,
-  .call = rlang::current_env()
+  .call = current_env()
 ) {
   check_id_set(id_set)
 
@@ -71,11 +71,11 @@ elink <- function(
   id_params$dbfrom <- id_params$db
   id_params$db <- NULL
 
-  if (is.na(cmd)) cmd <- if (is.entrez_web_history(id_set)) "neighbor_history" else "neighbor"
-  if (is.na(.method)) .method <- if (is.entrez_web_history(id_set)) "GET" else "POST"
+  if (is.na(cmd)) cmd <- if (is_web_history(id_set)) "neighbor_history" else "neighbor"
+  if (is.na(.method)) .method <- if (is_web_history(id_set)) "GET" else "POST"
 
   if (rlang::is_na(.process)) {
-    .process <- if (is.entrez_id_list(id_set) && cmd == "neighbor" && .multi == "explode") {
+    .process <- if (is_id_list(id_set) && cmd == "neighbor" && .multi == "explode") {
       process_xml_eLinkResult_flat
     } else if (cmd %in% c("neighbor", "neighbor_history")) {
       process_xml_eLinkResult_sets
@@ -85,7 +85,7 @@ elink <- function(
   }
 
   .paginate <- as.integer(.paginate)
-  if (is.entrez_id_list(id_set) && length(id_set) <= .paginate) .paginate <- 0L
+  if (is_id_list(id_set) && length(id_set) <= .paginate) .paginate <- 0L
 
   params <- rlang::list2(
     db = db,
@@ -95,17 +95,18 @@ elink <- function(
     ...
   )
 
-  if (is.entrez_id_list(id_set) && .paginate > 0L) {
+  if (is_id_list(id_set) && .paginate > 0L) {
     if (is.na(.cookies)) {
       .cookies <- tempfile()
       on.exit(if (file.exists(.cookies)) file.remove(.cookies), add = TRUE)
     }
 
     sets <- split_id_list(id_set, max_per_batch = .paginate)
-    params$id <- entrez_ids(sets[[1]])
-    # FIXME warn if .method != "POST" to avoid surprises (or accomodate id existing in URL query)
-    # FIXME if only 1 UID is provided it'll end up in the URL query anyway and error
-    req <- new_request("elink.fcgi", params, .method = "POST", .cookies = .cookies, .call = .call)
+    params$id <- il_ids_get(sets[[1]])
+    req <- new_request(
+      "elink.fcgi", params, .method = "POST", .body_params = c("id"),
+      .cookies = .cookies, .call = .call
+    )
 
     req |>
       httr2::req_perform_iterative(
@@ -117,7 +118,7 @@ elink <- function(
         path = .path,
         max_reqs = length(sets),
         on_error = "return",
-        progress = "ELink"
+        progress = .progress
       ) |>
       httr2::resps_successes() |>
       httr2::resps_data(function(resp) {
@@ -125,10 +126,22 @@ elink <- function(
           process_response(fn = .process, envir = .process_elink, call = .call, arg = ".process")
       })
   } else {
-    req <- new_request("elink.fcgi", params, .method = .method, .multi = .multi, .cookies = .cookies, .call = .call)
+    req <- new_request(
+      "elink.fcgi", params, .method = .method, .multi = .multi,
+      .cookies = .cookies, .call = .call
+    )
     resp <- httr2::req_perform(req, path = path_glue_dummy(.path))
-    parse_response(resp, retmode, call = .call) |>
-      process_response(fn = .process, envir = .process_elink, call = .call, arg = ".process")
+    doc <- parse_response(resp, retmode, call = .call)
+
+    # For some reason, Entrez returns the full set of IDs in the web history item as
+    # part of its response. We may as well cache that to make any future conversion
+    # to an ID list instant.
+    if (is_web_history(id_set) && retmode == "xml") {
+      from <- process_xml_eLinkResult_from(doc)
+      wh_ids_set(id_set, il_ids_get(from))
+    }
+
+    process_response(doc, fn = .process, envir = .process_elink, call = .call, arg = ".process")
   }
 }
 
@@ -140,14 +153,16 @@ elink_map <- function(
   ...,
   .cookies = NA,
   .path = NULL,
-  .call = rlang::current_env()
+  .call = current_env()
 ) {
+  check_id_set(id_set)
+
   if (is.na(.cookies)) {
     .cookies <- tempfile()
     on.exit(if (file.exists(.cookies)) file.remove(.cookies), add = TRUE)
   }
 
-  if (is.entrez_id_list(id_set)) {
+  if (is_id_list(id_set)) {
     elink(
       id_set,
       db,
@@ -187,15 +202,15 @@ elink_map <- function(
 # from - entrez_id_list
 #   to - entrez_web_history
 remap_links <- function(from, linkname, to, params, .cookies, .call) {
-  if (is.entrez_web_history(to)) to <- entrez_translate(to)
+  to <- as_id_list(to)
 
   params$linkname <- linkname
   if (length(to) < 0.75 * length(from)) {
     # the reverse relationship will be more efficient
-    stopifnot(is.entrez_id_list(to))
+    check_id_list(to)
     elink_map(to, entrez_database(from), !!!params, .cookies = .cookies, .call = .call)
   } else {
-    stopifnot(is.entrez_id_list(from))
+    check_id_list(from)
     elink_map(from, entrez_database(to), !!!params, .cookies = .cookies, .call = .call)
   }
 }
@@ -220,14 +235,12 @@ process_xml_LinkSet_df_one_to_one <- function(doc) {
   links <- xml_find_all(doc, "LinkSet/LinkSetDb")
   vctrs::data_frame(
     db_from = links |> xml2::xml_find_first("./ancestor::LinkSet/DbFrom") |> xml_text(),
-    id_from = links |> xml_find_all("./ancestor::LinkSet/IdList/Id", flatten = FALSE) |> xml_text_from_list(),
+    id_from = links |> xml_find_all("./ancestor::LinkSet/IdList/Id", flatten = FALSE) |> xml_text_from_list() |> purrr::map(list),
     db_to = links |> xml_find_all("./DbTo") |> xml_text(),
     linkname = links |> xml_find_all("./LinkName") |> xml_text(),
     id_to = links |> xml_find_all("./Link/Id", flatten = FALSE) |> purrr::map(xml_text),
   )
 }
-# example one-to-one
-# xo2o <- xml2::read_xml("<eLinkResult><LinkSet><DbFrom>protein</DbFrom><IdList><Id>15718680</Id></IdList><LinkSetDb><DbTo>gene</DbTo><LinkName>protein_gene</LinkName><Link><Id>3702</Id></Link></LinkSetDb></LinkSet><LinkSet><DbFrom>protein</DbFrom><IdList><Id>157427902</Id></IdList><LinkSetDb><DbTo>gene</DbTo><LinkName>protein_gene</LinkName><Link><Id>522311</Id></Link></LinkSetDb></LinkSet></eLinkResult>")
 
 process_xml_LinkSet_df_many_to_many <- function(doc) {
   links <- xml_find_all(doc, "LinkSet/LinkSetDb")
@@ -239,8 +252,13 @@ process_xml_LinkSet_df_many_to_many <- function(doc) {
     id_to = links |> xml_find_all("./Link/Id", flatten = FALSE) |> purrr::map(xml_text),
   )
 }
-# example many-to-many
-# xm2m <- xml2::read_xml("<eLinkResult><LinkSet><DbFrom>protein</DbFrom><IdList><Id>15718680</Id><Id>157427902</Id></IdList><LinkSetDb><DbTo>gene</DbTo><LinkName>protein_gene</LinkName><Link><Id>522311</Id></Link><Link><Id>3702</Id></Link></LinkSetDb></LinkSet></eLinkResult>")
+
+process_xml_eLinkResult_from <- function(doc) {
+  check_xml_root(doc, "eLinkResult")
+  dbfrom <- xml_find_first(doc, "/eLinkResult/LinkSet/DbFrom") |> xml_text()
+  idsfrom <- xml_find_all(doc, "/eLinkResult/LinkSet/IdList/Id") |> xml_text()
+  id_list(dbfrom, idsfrom)
+}
 
 process_xml_eLinkResult_sets <- function(doc) {
   check_xml_root(doc, "eLinkResult")
@@ -249,7 +267,7 @@ process_xml_eLinkResult_sets <- function(doc) {
     # source set is always an explicit list, even when user input was a WebEnv
     dbfrom <- xml_find_first(set, "./DbFrom") |> xml_text()
     idsfrom <- xml_find_all(set, "./IdList/Id") |> xml_text()
-    from <- entrez_id_list(dbfrom, idsfrom)
+    from <- id_list(dbfrom, idsfrom)
 
     setdb <- xml_find_all(set, "./LinkSetDb", flatten = FALSE)
     dbto <- xml_find_all(setdb, "./DbTo", flatten = FALSE) |> xml_text_from_list()
@@ -258,7 +276,7 @@ process_xml_eLinkResult_sets <- function(doc) {
       from = list(from),
       linkname = xml_find_all(setdb, "./LinkName", flatten = FALSE) |> xml_text_from_list(),
       to = purrr::map2(setdb, dbto, function(x, y) {
-        entrez_id_list(y, xml_find_all(x, "./Link/Id", flatten = FALSE) |> xml_text_from_list())
+        id_list(y, xml_find_all(x, "./Link/Id", flatten = FALSE) |> xml_text_from_list())
       })
     )
 
@@ -271,14 +289,12 @@ process_xml_eLinkResult_sets <- function(doc) {
     vctrs::data_frame(
       from = list(from),
       linkname = linkname,
-      to = purrr::map2(query_key, dbto, \(x, y) entrez_web_history(y, x, WebEnv))
+      to = purrr::map2(dbto, query_key, \(x, y) web_history(x, WebEnv, y))
     ) |> vctrs::vec_rbind(ret)
   }) |>
     purrr::list_rbind() |>
     tibble_cnv()
 }
-# example result on history server
-# xh <- xml2::read_xml("<eLinkResult><LinkSet><DbFrom>protein</DbFrom><IdList><Id>15718680</Id><Id>157427902</Id></IdList><LinkSetDbHistory><DbTo>gene</DbTo><LinkName>protein_gene</LinkName><QueryKey>1</QueryKey></LinkSetDbHistory><WebEnv>MCID_683e2b73edf8cc72200bc02f</WebEnv></LinkSet></eLinkResult>")
 
 #' @include process.R
 .process_elink <- new.env(parent = .process_common)
