@@ -9,7 +9,7 @@ entrez_translate(
   idtype = NULL,
   .paginate = 5000L,
   .path = NULL,
-  .call = rlang::current_env()
+  .call = current_env()
 )
 }
 \arguments{

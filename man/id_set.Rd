@@ -19,7 +19,7 @@ is_id_list(x)
 
 is_web_history(x)
 
-as_id_list(x, .paginate = 5000L, .path = NULL, .call = rlang::current_env())
+as_id_list(x, .paginate = 5000L, .path = NULL, .call = current_env())
 }
 \arguments{
 \item{db}{name of the associated Entrez database (e.g. \code{"biosample"}).}

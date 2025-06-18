@@ -11,7 +11,13 @@
 #' @inheritParams efetch
 #' @return [`id_list`] object
 #' @export
-entrez_translate <- function(id_set, idtype = NULL, .paginate = 5000L, .path = NULL, .call = rlang::current_env()) {
+entrez_translate <- function(
+  id_set,
+  idtype = NULL,
+  .paginate = 5000L,
+  .path = NULL,
+  .call = current_env()
+) {
   if (!.paginate) .paginate <- 5000L
   if (is_web_history(id_set)) {
     download_web_history(id_set, .paginate = .paginate, .path = .path, .call = .call)
@@ -34,14 +40,14 @@ entrez_translate <- function(id_set, idtype = NULL, .paginate = 5000L, .path = N
 #' @rdname id_set
 #' @inheritParams esearch
 #' @export
-as_id_list <- function(x, .paginate = 5000L, .path = NULL, .call = rlang::current_env()) {
+as_id_list <- function(x, .paginate = 5000L, .path = NULL, .call = current_env()) {
   check_id_set(x)
 
   if (is_id_list(x)) return(x)
   
   ids <- wh_ids_get(x)
   if (is.null(ids)) {
-    res <- download_web_history(id_set, .paginate = .paginate, .path = ,path, .call = .call) 
+    res <- download_web_history(x, .paginate = .paginate, .path = .path, .call = .call) 
     ids <- il_ids_get(res)
     wh_ids_set(x, ids)
   }
@@ -49,7 +55,7 @@ as_id_list <- function(x, .paginate = 5000L, .path = NULL, .call = rlang::curren
   id_list(entrez_database(x), ids)
 }
 
-download_web_history <- function(id_set, .paginate = 5000L, .path = NULL, .call = rlang::current_env()) {
+download_web_history <- function(id_set, .paginate = 5000L, .path = NULL, .call = current_env()) {
   check_web_history(x)
 
   esearch(
@@ -58,6 +64,7 @@ download_web_history <- function(id_set, .paginate = 5000L, .path = NULL, .call 
     WebEnv = wh_webenv(id_set),
     query_key = wh_qrykey(id_set),
     usehistory = FALSE,
+    .verbose = FALSE,
     .paginate = .paginate,
     .path = .path,
     .call = .call
