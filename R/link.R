@@ -111,7 +111,7 @@ elink <- function(
     req |>
       httr2::req_perform_iterative(
         next_req = iterate_body_form(
-          id = Map(entrez_ids, sets[2:length(sets)]),
+          id = Map(il_ids_get, sets[2:length(sets)]),
           .multi = .multi,
           .call = .call
         ),

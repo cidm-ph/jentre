@@ -17,7 +17,7 @@
 #' @param retmode character: currently only `"xml"` is supported.
 #' @param rettype character: currently only `"uilist"` is supported.
 #' @param usehistory logical: when `TRUE` use the history server to return the result.
-#' @param WebEnv,query_key either characters to pass on as-is, or [`entrez_web_history`] objects.
+#' @param WebEnv,query_key either characters to pass on as-is, or [`web_history`] objects.
 #' @param .paginate controls how multiple API requests are used to complete the call.
 #'   Pagination is performed using the `retstart` and `retmax` API parameters.
 #'   When set to an integer, no more than `.pagniate` items will be requested per API call.
@@ -25,6 +25,8 @@
 #'   Ignored when `usehistory` is `TRUE`.
 #' @param .path path specification for saving raw responses.
 #'   See `path` argument of [`httr2::req_perform_iterative()`].
+#' @param .progress controls progress bar; see the `progress` argument of
+#'   [`httr2::req_perform_iterative()`].
 #' @inheritParams entrez_request
 #' @return id set object (either a [`web_history`] or an [`id_list`]).
 #' @seealso <https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESearch>

@@ -7,7 +7,7 @@
 entrez_validate(id_set, .paginate = 5000L, .path = NULL, .call = current_env())
 }
 \arguments{
-\item{id_set}{an \code{\link{entrez_id_list}} object.}
+\item{id_set}{an \code{\link{id_list}} object.}
 
 \item{.paginate}{controls how multiple API requests are used to complete the call.
 Pagination is performed using the \code{retstart} and \code{retmax} API parameters.

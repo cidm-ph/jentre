@@ -1,11 +1,11 @@
 #' Count the number of entries in an ID set
 #' 
-#' If `id_set` is an `id_list` then this is equivalent to `length()`.
+#' If `id_set` is an [`id_list`] then this is equivalent to `length()`.
 #' If it is a `web_history`, this may involve an Entrez API call to get the
 #' number of entries. In this case the result is cached so that subsequent
 #' calls don't hit the API again.
 #'
-#' @param id_set an [`id_set`] object.
+#' @param id_set an ID set object.
 #' @return integer number of entries.
 #' @inheritParams esearch
 #' @export

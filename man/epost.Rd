@@ -7,12 +7,12 @@
 epost(id_set, ..., WebEnv = NULL, .path = NULL, .call = rlang::current_env())
 }
 \arguments{
-\item{id_set}{an \code{\link{entrez_id_list}} object.}
+\item{id_set}{an \code{\link{id_list}} object.}
 
 \item{...}{additional API parameters (refer to Entrez documentation).
 Any set to \code{NULL} are removed.}
 
-\item{WebEnv}{either a character to pass on as-is, or an \code{\link{entrez_web_history}} object.}
+\item{WebEnv}{either a character to pass on as-is, or a \code{\link{web_history}} object.}
 
 \item{.path}{path specification for saving raw responses.}
 

@@ -7,7 +7,7 @@
 entrez_count(id_set, .call = current_env())
 }
 \arguments{
-\item{id_set}{an \code{\link{id_set}} object.}
+\item{id_set}{an ID set object.}
 
 \item{.call}{call environment to use in error messages/traces.
 See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} argument of \code{\link[cli:cli_abort]{cli::cli_abort()}}.
@@ -18,7 +18,7 @@ mentioned in error messages.}
 integer number of entries.
 }
 \description{
-If \code{id_set} is an \code{id_list} then this is equivalent to \code{length()}.
+If \code{id_set} is an \code{\link{id_list}} then this is equivalent to \code{length()}.
 If it is a \code{web_history}, this may involve an Entrez API call to get the
 number of entries. In this case the result is cached so that subsequent
 calls don't hit the API again.

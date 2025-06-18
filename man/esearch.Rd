@@ -47,7 +47,7 @@ Ignored when \code{usehistory} is \code{TRUE}.}
 
 \item{usehistory}{logical: when \code{TRUE} use the history server to return the result.}
 
-\item{WebEnv, query_key}{either characters to pass on as-is, or \code{\link{entrez_web_history}} objects.}
+\item{WebEnv, query_key}{either characters to pass on as-is, or \code{\link{web_history}} objects.}
 
 \item{.cookies}{path to persist cookies.
 If \code{NULL}, cookies are not added to the request.
@@ -59,6 +59,9 @@ Pagination is performed using the \code{retstart} and \code{retmax} API paramete
 When set to an integer, no more than \code{.pagniate} items will be requested per API call.
 When \code{FALSE} or \code{0}, only one API request is sent.
 Ignored when \code{usehistory} is \code{TRUE}.}
+
+\item{.progress}{controls progress bar; see the \code{progress} argument of
+\code{\link[httr2:req_perform_iterative]{httr2::req_perform_iterative()}}.}
 
 \item{.path}{path specification for saving raw responses.
 See \code{path} argument of \code{\link[httr2:req_perform_iterative]{httr2::req_perform_iterative()}}.}
@@ -87,7 +90,7 @@ Other API methods:
 \code{\link{efetch}()},
 \code{\link{einfo}()},
 \code{\link{elink}()},
-\code{\link{entrez_translate}()},
+\code{\link{entrez_validate}()},
 \code{\link{epost}()},
 \code{\link{esummary}()}
 }
