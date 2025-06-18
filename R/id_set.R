@@ -104,7 +104,7 @@ vec_ptype_full.jentre_web_history <- function(x, ...) paste0("entrez@/", attr(x,
 vec_ptype_abbr.jentre_web_history <- function(x, ...) "wbhst"
 #' @export
 format.jentre_web_history <- function(x, ...) {
-  env <- abbreviate(vctrs::field(x, "WebEnv"))
+  env <- abbreviate(vctrs::field(x, "WebEnv"), method = "both.sides", minlength = 10, use.classes = FALSE, dot = TRUE)
   keys <- vctrs::field(x, "query_key")
   lens <- wh_len_get(x)
   lens[is.na(lens)] <- "?"

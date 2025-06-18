@@ -47,7 +47,7 @@ install.packages('jentre', repos = c('https://cidm-ph.r-universe.dev', 'https://
 ```{r, echo=FALSE}
 c(
   "esearch_web_history.xml",
-  "elink_manytomany.xml",
+  "elink_wh.xml",
   "entrez_translate_web_history.xml",
   "esummary_sra.xml",
   "esearch_demo.xml"
@@ -70,19 +70,19 @@ library(jentre)
 results <- esearch("Corynebacterium diphtheriae[orgn]", "biosample")
 results
 
-# The return object keeps track of which database the UIDs belong to,
+# The returned object keeps track of which database the UIDs belong to,
 # and whether the UIDs are local or on the history server. This makes
 # them easier and less error-prone to use:
 links <- elink(results, "sra")
 links
 
 # You can pull a list of UIDs from the history server:
-ids <- entrez_translate(links$to[[1]])
+ids <- as_id_list(links$to[[1]])
 
 # This is a vector with some extra metadata attached, but can be
 # subsetted normally:
 head(ids, n = 10)
-entrez_ids(ids[4:8])
+as.character(ids[4:8])
 
 # For endpoints with richer data, you can provide an function to
 # extract data you care about from the XML document. The output is
