@@ -1,7 +1,7 @@
 #' @importFrom rlang !!! list2 current_env caller_env
 NULL
 
-parse_response <- function(resp, retmode, ..., errors = TRUE, call = rlang::caller_env()) {
+parse_response <- function(resp, retmode, ..., errors = TRUE, call = caller_env()) {
   # TODO handle application errors
   doc <- switch(
     retmode,
@@ -13,7 +13,7 @@ parse_response <- function(resp, retmode, ..., errors = TRUE, call = rlang::call
   doc
 }
 
-raise_xml_error <- function(doc, call = rlang::caller_env()) {
+raise_xml_error <- function(doc, call = caller_env()) {
   err <- xml_find_first(doc, "//ERROR")
   if (!is.na(err)) {
     cli::cli_abort(
@@ -24,7 +24,7 @@ raise_xml_error <- function(doc, call = rlang::caller_env()) {
   doc
 }
 
-entrez_id_params <- function(id_set, call = rlang::caller_env()) {
+entrez_id_params <- function(id_set, call = caller_env()) {
   check_id_set(id_set, call = call)
   if (is_id_list(id_set)) {
     list(db = entrez_database(id_set), id = il_ids_get(id_set))
@@ -35,7 +35,7 @@ entrez_id_params <- function(id_set, call = rlang::caller_env()) {
   }
 }
 
-webhist_params <- function(WebEnv = NULL, query_key = NULL, call = rlang::caller_env()) {
+webhist_params <- function(WebEnv = NULL, query_key = NULL, call = caller_env()) {
   if (!is.null(WebEnv) && is_web_history(WebEnv)) WebEnv <- wh_webenv(WebEnv)
   if (!is.null(query_key) && is_web_history(query_key)) query_key <- wh_qrykey(query_key)
 
@@ -43,15 +43,19 @@ webhist_params <- function(WebEnv = NULL, query_key = NULL, call = rlang::caller
 }
 
 split_id_list <- function(id_set, max_per_batch) {
+  if (length(id_set) < 1) return(list(id_set))
+  max_per_batch <- vctrs::vec_cast(max_per_batch, integer())
+  check_scalar_positive_integer(max_per_batch, allow_na = FALSE)
+
   n_batches <- ceiling(length(id_set) / max_per_batch)
   n_per_batch <- ceiling(length(id_set) / n_batches)
-  starts <- seq(from = 1, to = length(id_set) - 1, by = n_per_batch)
+  starts <- seq(from = 1, to = length(id_set), by = n_per_batch)
   ends <- unique(c(seq(from = n_per_batch, to = length(id_set), by = n_per_batch), length(id_set)))
   purrr::map2(starts, ends, \(x, y) id_set[x:y])
 }
 
-req_body_form_modify <- function(req, ..., .multi = "error", .call = rlang::caller_env()) {
-  data <- rlang::list2(...)
+req_body_form_modify <- function(req, ..., .multi = "error", .call = caller_env()) {
+  data <- list2(...)
   if (is.null(req$body) || req$body$type != "form") {
     cli::cli_abort("Can only be used after {.fn httr2::req_body_form}", call = .call)
   }
@@ -65,8 +69,8 @@ req_body_form_modify <- function(req, ..., .multi = "error", .call = rlang::call
 #   list of the same length. Each request will take the
 #   first value of each such list and use it to update
 #   the request body.
-iterate_body_form <- function(..., .multi = "error", .call = rlang::caller_env()) {
-  params <- rlang::list2(...)
+iterate_body_form <- function(..., .multi = "error", .call = caller_env()) {
+  params <- list2(...)
   stopifnot(length(params) > 0, rlang::is_named2(params))
   lengths <- sapply(params, length)
   stopifnot(all(lengths == lengths[[1]]))
@@ -99,7 +103,7 @@ check_arg <- function(test, what) {
     allow_na = TRUE,
     allow_null = FALSE,
     arg = rlang::caller_arg(x),
-    call = rlang::caller_env()
+    call = caller_env()
   ) {
     if (!missing(x)) {
       if (test(x)) {
@@ -123,3 +127,7 @@ check_arg <- function(test, what) {
 check_character <- check_arg(rlang::is_character, "a character vector")
 check_scalar_character <- check_arg(rlang::is_scalar_character, "a character scalar")
 check_scalar_integer <- check_arg(rlang::is_scalar_integer, "a scalar integer")
+check_scalar_positive_integer <- check_arg(
+  \(x) rlang::is_scalar_integer(x) && x > 0L,
+  "a positive scalar integer"
+)

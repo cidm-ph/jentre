@@ -1,5 +1,4 @@
 #' @import vctrs
-#' @include utils.R
 NULL
 
 #' Entrez identifier sets
@@ -33,7 +32,8 @@ NULL
 #' @export
 id_list <- function(db, ids = character()) {
   ids <- vctrs::vec_cast(ids, character())
-  stopifnot(!anyNA(ids), !is.na(db))
+  check_scalar_character(db, allow_na = FALSE)
+  check_character(ids, allow_na = FALSE)
   new_id_list(db, ids)
 }
 new_id_list <- function(db, ids = character()) {
