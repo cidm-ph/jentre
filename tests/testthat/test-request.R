@@ -26,3 +26,13 @@ test_that("specific params can be forced into the body", {
   expect_contains(names(req$body$data), "id")
   expect_true(! "id" %in% names(query))
 })
+
+test_that("api key can be set with options", {
+  withr::with_options(list(jentre.entrez_key = "abcdef123"), {
+    expect_equal(entrez_api_key(), "abcdef123")
+  })
+
+  withr::with_options(list(jentre.entrez_key = rlang::zap()), {
+    expect_equal(entrez_api_key(), NULL)
+  })
+})

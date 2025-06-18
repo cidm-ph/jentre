@@ -6,7 +6,17 @@
 \alias{jentre-package}
 \title{jentre: Toolkit for the 'Entrez' API}
 \description{
-A client for interacting with NCBI's 'Entrez' API \url{https://www.ncbi.nlm.nih.gov/books/NBK25499/}.
+To use this package effectively, you should have some understanding of
+the design of the Entrez API which is documented at
+\url{https://www.ncbi.nlm.nih.gov/books/NBK25500/}.
+Helper functions will make it easier to avoid common pitfalls, and to
+make use of features like pagination, but you'll still need to understand
+how to structure your requests efficiently to avoid undue load.
+}
+\details{
+Entrez API usage is subject to guidelines that are available at the URL above.
+Entrez datasets are also subject to copyright. Refer to the NCBI policies at
+\url{https://www.ncbi.nlm.nih.gov/home/about/policies/} for details.
 }
 \author{
 \strong{Maintainer}: Carl Suster \email{Carl.Suster@health.nsw.gov.au} (\href{https://orcid.org/0000-0001-7021-9380}{ORCID})

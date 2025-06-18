@@ -1,21 +1,27 @@
-# FIXME If you use the E-utilities within software, NCBI's Disclaimer and
-# Copyright notice (https://www.ncbi.nlm.nih.gov/About/disclaimer.html)
-# must be evident to users of your product.
-
 #' Construct a request to the Entrez API
 #' 
 #' This is a low-level helper that builds a request object but does not
 #' perform the request. In general you'll likely use higher-level methods
 #' like [`efetch()`] instead.
 #' 
-#' Some parameters have special handling:
-#'   * `api_key` is copied from the `ENTREZ_KEY` environment variable if set.
-#'   * `email` and `tool` are set to default values but can be overridden.
+#' `email`, `tool`, and `api_key` have default values but these can be
+#' overridden, or can be removed by setting them to `NULL`.
 #' 
 #' @section API limits:
-#' The Entrez APIs are rate limited. Requests in this package try to respect the
-#' limits (3/second, or 10/second when `api_key` is provided). Sometimes requests
-#' still get rate limited, so they are retried up to 2 times (with backoff).
+#' The Entrez APIs are rate limited.
+#' Requests in this package respect the API headers returned by Entrez.
+#' Without an API key you will be rate limited more aggressively, so it is
+#' recommended to [obtain an API key][entrez api key].
+#' `jentre` searches for the API key in the following order:
+#'   * the API parameter `entrez_key` provided to any API request function,
+#'   * the [option][base::options] `"jentre.api_key"`, then
+#'   * the environment variable `ENTREZ_KEY`.
+#' 
+#' You can check the value is found properly using `entrez_api_key()`.
+#' If no API key is set, a warning will be displayed. This can be suppressed
+#' by setting the option `"jentre.silence_api_warning"` to `TRUE`.
+#' 
+#' [entrez api key]: https://support.nlm.nih.gov/kbArticle/?pn=KA-05317
 #' 
 #' @param endpoint Entrez endpoint name (e.g. `"efetch.fcgi"`).
 #' @param ... additional API parameters (refer to Entrez documentation).
@@ -36,7 +42,9 @@
 #'   See [rlang::topic-error-call] and the `call` argument of [cli::cli_abort()].
 #'   You only need to specify this in internal helper functions that don't need to be
 #'   mentioned in error messages.
-#' @return `httr2::request` object.
+#' @return
+#'  * for `entrez_request()` an `httr2::request` object.
+#'  * for `entrez_api_key()`, the API key as a character, or `default` if no global config exists.
 #' @export
 entrez_request <- function(
   endpoint,
@@ -68,10 +76,12 @@ new_request <- function(
   .verbose = getOption("jentre.verbose", default = TRUE),
   .call = caller_env()
 ) {
-  # set default params but allow them to be overridden with NULL values
-  tool_params <- list(email = "Carl.Suster@health.nsw.gov.au", tool = "jentre")
-  api_key <- Sys.getenv('ENTREZ_KEY')
-  if (nchar(api_key) > 0) tool_params$api_key <- api_key
+  # set default params but allow them to be overridden (or removed with NULL values)
+  tool_params <- list(
+    email = "Carl.Suster@health.nsw.gov.au",
+    tool = "jentre",
+    api_key = entrez_api_key()
+  )
   params <- utils::modifyList(tool_params, params)
 
   # remove any NULL-values params
@@ -87,7 +97,7 @@ new_request <- function(
     ), call = .call)
   }
 
-  if (is.null(params$api_key)) {
+  if (is.null(params$api_key) && !getOption("jentre.silence_api_warning", FALSE)) {
     cli::cli_alert_warning("No API key was provided. Set {.env ENTREZ_KEY} to reduce rate limiting.")
     cli::cli_alert_info("More info on API keys: https://support.nlm.nih.gov/kbArticle/?pn=KA-05317")
   }
@@ -125,7 +135,21 @@ new_request <- function(
   } else {
     req |> httr2::req_url_query(!!!params, .multi = .multi)
   }
-  }
+}
+
+#' @rdname entrez_request
+#' @param default default value to return if no global configuration is found.
+#' @export
+entrez_api_key <- function(default = NULL) {
+  api_key <- getOption("jentre.entrez_key")
+  if (rlang::is_zap(api_key)) return(default)
+  if (!is.null(api_key)) return(api_key)
+
+  api_key <- Sys.getenv('ENTREZ_KEY')
+  if (nchar(api_key) > 0) return(api_key)
+
+  default
+}
 
 debug_request <- function(type, msg) {
   if (type == 2) { # req header

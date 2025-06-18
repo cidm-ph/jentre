@@ -2,6 +2,7 @@
 % Please edit documentation in R/request.R
 \name{entrez_request}
 \alias{entrez_request}
+\alias{entrez_api_key}
 \title{Construct a request to the Entrez API}
 \usage{
 entrez_request(
@@ -13,6 +14,8 @@ entrez_request(
   .verbose = getOption("jentre.verbose", default = TRUE),
   .call = current_env()
 )
+
+entrez_api_key(default = NULL)
 }
 \arguments{
 \item{endpoint}{Entrez endpoint name (e.g. \code{"efetch.fcgi"}).}
@@ -40,9 +43,14 @@ this behaviour and see more details.}
 See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} argument of \code{\link[cli:cli_abort]{cli::cli_abort()}}.
 You only need to specify this in internal helper functions that don't need to be
 mentioned in error messages.}
+
+\item{default}{default value to return if no global configuration is found.}
 }
 \value{
-\code{httr2::request} object.
+\itemize{
+\item for \code{entrez_request()} an \code{httr2::request} object.
+\item for \code{entrez_api_key()}, the API key as a character, or \code{default} if no global config exists.
+}
 }
 \description{
 This is a low-level helper that builds a request object but does not
@@ -50,16 +58,24 @@ perform the request. In general you'll likely use higher-level methods
 like \code{\link[=efetch]{efetch()}} instead.
 }
 \details{
-Some parameters have special handling:
-\itemize{
-\item \code{api_key} is copied from the \code{ENTREZ_KEY} environment variable if set.
-\item \code{email} and \code{tool} are set to default values but can be overridden.
-}
+\code{email}, \code{tool}, and \code{api_key} have default values but these can be
+overridden, or can be removed by setting them to \code{NULL}.
 }
 \section{API limits}{
 
-The Entrez APIs are rate limited. Requests in this package try to respect the
-limits (3/second, or 10/second when \code{api_key} is provided). Sometimes requests
-still get rate limited, so they are retried up to 2 times (with backoff).
+The Entrez APIs are rate limited.
+Requests in this package respect the API headers returned by Entrez.
+Without an API key you will be rate limited more aggressively, so it is
+recommended to \href{https://support.nlm.nih.gov/kbArticle/?pn=KA-05317}{obtain an API key}.
+\code{jentre} searches for the API key in the following order:
+\itemize{
+\item the API parameter \code{entrez_key} provided to any API request function,
+\item the \link[base:options]{option} \code{"jentre.api_key"}, then
+\item the environment variable \code{ENTREZ_KEY}.
+}
+
+You can check the value is found properly using \code{entrez_api_key()}.
+If no API key is set, a warning will be displayed. This can be suppressed
+by setting the option \code{"jentre.silence_api_warning"} to \code{TRUE}.
 }
 
