@@ -62,7 +62,7 @@ prefer_id_list <- function(x) {
 }
 
 download_web_history <- function(id_set, .paginate = 5000L, .path = NULL, .call = current_env()) {
-  check_web_history(x)
+  check_web_history(id_set)
 
   esearch(
     term = "",

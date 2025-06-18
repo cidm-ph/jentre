@@ -115,6 +115,7 @@ wh_webenv <- function(x) vctrs::field(x, "WebEnv")
 wh_qrykey <- function(x) vctrs::field(x, "query_key")
 wh_ids_set <- function(x, ids) {
   stopifnot(is_web_history(x))
+  rlang::env_poke(attr(x, "data"), "len", length(ids))
   rlang::env_poke(attr(x, "data"), "ids", ids)
 }
 wh_ids_get <- function(x) {
@@ -130,8 +131,43 @@ wh_len_get <- function(x) {
 
 #' @export
 vec_ptype2.jentre_id_list.jentre_id_list <- function(x, y, ...) {
-  check_compatible_db(x, y, call = rlang::caller_env())
+  check_compatible_db(x, y, call = caller_env())
   new_id_list(entrez_database(x))
+}
+#' @export
+vec_ptype2.jentre_web_history.jentre_web_history <- function(x, y, ...) {
+  check_compatible_db(x, y, call = caller_env())
+  new_web_history(entrez_database(x), NA_character_, NA_character_)
+}
+#' @export
+vec_ptype2.jentre_id_list.character <- function(x, y, ...) character()
+#' @export
+vec_ptype2.character.jentre_id_list <- function(x, y, ...) character()
+#' @export
+vec_cast.jentre_id_list.character <- function(x, to, ...) id_list(attr(to, "database"), x)
+#' @export
+vec_cast.character.jentre_id_list <- function(x, to, ...) vctrs::vec_data(x)
+
+#' @export
+vec_ptype2.jentre_id_list.jentre_web_history <- function(x, y, ...) {
+  check_compatible_db(x, y, call = caller_env())
+  new_id_list(entrez_database(x))
+}
+#' @export
+vec_ptype2.jentre_web_history.jentre_id_list <- vec_ptype2.jentre_id_list.jentre_web_history
+#' @export
+vec_cast.jentre_id_list.jentre_web_history <- function(x, to, ...) {
+  check_compatible_db(x, to, call = caller_env())
+  ids <- wh_ids_get(x)
+  if (is.null(ids)) {
+    stop_incompatible_cast(
+      x, to,
+      x_arg = rlang::caller_arg(x),
+      to_arg = rlang::caller_arg(to),
+      message = "IDs are not cached; use as_id_list() instead"
+    )
+  }
+  new_id_list(attr(to, "database"), ids)
 }
 
 check_compatible_db <- function(
