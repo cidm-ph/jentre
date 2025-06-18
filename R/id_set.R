@@ -31,7 +31,6 @@ NULL
 #'  * For `is_id_set()`, `is_id_list()`, and `is_web_history()` a logical.
 #' @export
 id_list <- function(db, ids = character()) {
-  ids <- vctrs::vec_cast(ids, character())
   check_scalar_character(db, allow_na = FALSE)
   check_character(ids, allow_na = FALSE)
   new_id_list(db, ids)

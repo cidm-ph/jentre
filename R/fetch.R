@@ -159,6 +159,7 @@ efetch_impl <- function(
 
   params <- rlang::list2(
     !!!entrez_id_params(id_set),
+    rettype = rettype,
     retstart = retstart,
     retmax = retmax,
     retmode = retmode,
