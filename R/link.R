@@ -65,6 +65,8 @@ elink <- function(
   .path = NULL,
   .call = rlang::current_env()
 ) {
+  check_id_set(id_set)
+
   id_params <- entrez_id_params(id_set)
   id_params$dbfrom <- id_params$db
   id_params$db <- NULL

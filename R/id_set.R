@@ -1,4 +1,5 @@
 #' @import vctrs
+#' @include utils.R
 NULL
 
 #' Entrez identifier sets
@@ -48,7 +49,12 @@ new_id_list <- function(db, ids = character()) {
 #' @param length number of UIDs in the set, if known.
 #' @export
 web_history <- function(db, WebEnv, query_key, length = NA) {
-  stopifnot(!anyNA(WebEnv), !anyNA(query_key), !is.na(db))
+  check_scalar_character(db, allow_na = FALSE)
+  check_scalar_character(WebEnv, allow_na = FALSE)
+  check_scalar_character(query_key, allow_na = FALSE)
+  length <- vctrs::vec_cast(length, integer())
+  check_scalar_integer(length, allow_na = TRUE)
+
   query_key <- as.integer(query_key)
   x <- vctrs::vec_recycle_common(WebEnv, query_key, length)
   vctrs::list_check_all_size(x, 1)
