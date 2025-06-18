@@ -45,7 +45,7 @@ entrez_request <- function(
   .multi = "comma",
   .cookies = NULL,
   .verbose = getOption("jentre.verbose", default = TRUE),
-  .call = rlang::caller_env()
+  .call = current_env()
 ) {
   new_request(
     endpoint,
@@ -63,33 +63,48 @@ new_request <- function(
   params,
   .method = "GET",
   .multi = "comma",
+  .body_params = NULL,
   .cookies = NULL,
   .verbose = getOption("jentre.verbose", default = TRUE),
-  .call = rlang::caller_env()
+  .call = caller_env()
 ) {
-  params <- params[!sapply(params, is.null, USE.NAMES = FALSE)]
+  # set default params but allow them to be overridden with NULL values
   tool_params <- list(email = "Carl.Suster@health.nsw.gov.au", tool = "jentre")
   api_key <- Sys.getenv('ENTREZ_KEY')
   if (nchar(api_key) > 0) tool_params$api_key <- api_key
   params <- utils::modifyList(tool_params, params)
 
+  # remove any NULL-values params
+  params <- params[!sapply(params, is.null, USE.NAMES = FALSE)]
+
   dot_params <- names(params)[startsWith(names(params), ".")]
   if (length(dot_params) > 0) {
+    known_dot_params <- rlang::fn_fmls_names(entrez_request)
+    known_dot_params <- known_dot_params[startsWith(known_dot_params, ".") & (known_dot_params != "...")]
     cli::cli_abort(c(
-      "Unknown Entrez params {dot_params}",
-       "i" = "Are these misspelled arguments?"
+      "Unknown Entrez param{?s} {.field {dot_params}}",
+       "i" = "Did you mean {.or {.arg {known_dot_params}}}?"
     ), call = .call)
   }
 
-  rps <- 3L
-  if (!is.null(params$api_key)) rps <- 10L
+  if (is.null(params$api_key)) {
+    cli::cli_alert_warning("No API key was provided. Set {.env ENTREZ_KEY} to reduce rate limiting.")
+    cli::cli_alert_info("More info on API keys: https://support.nlm.nih.gov/kbArticle/?pn=KA-05317")
+  }
+
+  if (!is.null(.body_params) && .method != "POST") {
+    cli::cli_abort(c(
+      "Only the {.val POST} HTTP method is compatible with {.arg .body_params}",
+      "i" = "You specified a {.arg .method} of {.val { .method}}"
+    ), call = .call)
+  }
+  .body_params <- intersect(as.character(.body_params), names(params))
 
   req <-
     httr2::request("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/") |>
     httr2::req_user_agent("jentre (https://github.com/cidm-ph/jentre)") |>
     httr2::req_url_path_append(endpoint) |>
     httr2::req_method(.method) |>
-    httr2::req_throttle(fill_time_s = 1L, capacity = rps - 1L) |>
     httr2::req_retry(max_tries = 3L, retry_on_failure = TRUE)
 
   if (.verbose) {
@@ -102,6 +117,7 @@ new_request <- function(
 
   if (.method == "POST") {
     data_params <- names(params)[Map(length, params) > 1L]
+    data_params <- union(data_params, .body_params)
     query_params <- setdiff(names(params), data_params)
     req |>
       httr2::req_url_query(!!!params[query_params], .multi = "error") |>
@@ -109,7 +125,7 @@ new_request <- function(
   } else {
     req |> httr2::req_url_query(!!!params, .multi = .multi)
   }
-}
+  }
 
 debug_request <- function(type, msg) {
   if (type == 2) { # req header
@@ -123,12 +139,14 @@ debug_request <- function(type, msg) {
     ep <- gsub("\\.fcgi$", "", basename(url$path))
     data <- url$query
     parm <- data[setdiff(names(data), c("tool", "email", "api_key"))]
-    parm <- paste0(
-      paste0("{.field ", names(parm), "}"),
-      "=",
-      paste0("{.val ", format(unname(parm)), "}"),
-      collapse = " "
-    )
+    if (length(parm) > 0) {
+      parm <- paste0(
+        paste0("{.field ", names(parm), "}"),
+        "=",
+        paste0("{.val ", format(unname(parm)), "}"),
+        collapse = " "
+      )
+    }
     cli::cli_alert(paste0("{.strong {ep}} ", parm))
   }
 }

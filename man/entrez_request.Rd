@@ -11,7 +11,7 @@ entrez_request(
   .multi = "comma",
   .cookies = NULL,
   .verbose = getOption("jentre.verbose", default = TRUE),
-  .call = rlang::caller_env()
+  .call = current_env()
 )
 }
 \arguments{
