@@ -44,6 +44,7 @@ esearch <- function(
   .paginate = 10000L,
   .progress = "ESearch",
   .path = NULL,
+  .verbose = getOption("jentre.verbose", default = TRUE),
   .call = current_env()
 ) {
   force(usehistory)
@@ -77,7 +78,7 @@ esearch <- function(
     httr2::req_perform(req, path = path_glue_dummy(.path)) |>
       parse_response("xml", call = .call) |>
       check_xml_eSearchResult() |>
-      inform_xml_eSearchResult() |>
+      inform_xml_eSearchResult(.verbose) |>
       process_response(fn = process_xml_eSearchResult_webhist(db), call = .call)
   } else if (.paginate == 0L) {
     if (is.na(retmax)) {
@@ -88,7 +89,7 @@ esearch <- function(
       httr2::req_perform(req, path = path_glue_dummy(.path)) |>
       parse_response("xml", call = .call) |>
       check_xml_eSearchResult() |>
-      inform_xml_eSearchResult() |>
+      inform_xml_eSearchResult(.verbose) |>
       process_response(fn = process_xml_eSearchResult_uilist, call = .call)
     id_list(db, ids)
   } else {
@@ -122,20 +123,20 @@ esearch <- function(
         )
       ) |>
       httr2::resps_successes() |>
-      httr2::resps_data(search_resps_data(.call))
+      httr2::resps_data(search_resps_data(.verbose, .call))
     
     id_list(db, ids)
   }
 }
 
-search_resps_data <- function(.call) {
+search_resps_data <- function(verbose, .call) {
   env <- environment()
   function(resp) {
     doc <- parse_response(resp, "xml", call = .call) |>
       check_xml_eSearchResult()
     if (rlang::env_cache(env, ".first", TRUE)) {
       rlang::env_poke(env, ".first", FALSE)
-      inform_xml_eSearchResult(doc)
+      inform_xml_eSearchResult(doc, verbose)
     }
     process_response(doc, fn = process_xml_eSearchResult_uilist, call = .call)
   }
@@ -154,10 +155,15 @@ check_xml_eSearchResult <- function(doc) {
   invisible(doc)
 }
 
-inform_xml_eSearchResult <- function(doc) {
-  count <- xml_find_first(doc, "/eSearchResult/Count") |> xml2::xml_integer()
-  translation <- xml_find_first(doc, "//QueryTranslation") |> xml_text()
-  cli::cli_alert_info("{.field eSearch} query {.val {translation}} has {.strong {count}} results", class = "esearch_info")
+inform_xml_eSearchResult <- function(doc, verbose = TRUE) {
+  if (verbose) {
+    count <- xml_find_first(doc, "/eSearchResult/Count") |> xml2::xml_integer()
+    translation <- xml_find_first(doc, "//QueryTranslation") |> xml_text()
+    cli::cli_alert_info(
+      "{.field eSearch} query {.val {translation}} has {.strong {count}} results",
+      class = "esearch_info"
+    )
+  }
 
   invisible(doc)
 }

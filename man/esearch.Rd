@@ -19,6 +19,7 @@ esearch(
   .paginate = 10000L,
   .progress = "ESearch",
   .path = NULL,
+  .verbose = getOption("jentre.verbose", default = TRUE),
   .call = current_env()
 )
 }
@@ -61,6 +62,11 @@ Ignored when \code{usehistory} is \code{TRUE}.}
 
 \item{.path}{path specification for saving raw responses.
 See \code{path} argument of \code{\link[httr2:req_perform_iterative]{httr2::req_perform_iterative()}}.}
+
+\item{.verbose}{logical: when TRUE logs all API requests as messages in a compact format.
+This uses a summarised format that does not include the request body for POST.
+Use normal httr verbosity controls (e.g. \code{\link[httr2:with_verbosity]{httr2::local_verbosity()}}) to override
+this behaviour and see more details.}
 
 \item{.call}{call environment to use in error messages/traces.
 See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} argument of \code{\link[cli:cli_abort]{cli::cli_abort()}}.
