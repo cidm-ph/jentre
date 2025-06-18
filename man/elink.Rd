@@ -107,7 +107,7 @@ several API requests to achieve the result.
 Other API methods: 
 \code{\link{efetch}()},
 \code{\link{einfo}()},
-\code{\link{entrez_translate}()},
+\code{\link{entrez_validate}()},
 \code{\link{epost}()},
 \code{\link{esearch}()},
 \code{\link{esummary}()}

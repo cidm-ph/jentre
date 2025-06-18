@@ -4,7 +4,7 @@
 \alias{entrez_count}
 \title{Count the number of entries in an ID set}
 \usage{
-entrez_count(id_set, .call = rlang::caller_env())
+entrez_count(id_set, .call = current_env())
 }
 \arguments{
 \item{id_set}{an \code{\link{id_set}} object.}

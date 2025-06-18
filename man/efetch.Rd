@@ -10,10 +10,12 @@ efetch(
   retstart = 0L,
   retmax = NA,
   retmode = "xml",
+  rettype = NULL,
   .method = NA,
   .cookies = NA,
   .paginate = 200L,
-  .process = "identity",
+  .process = NA,
+  .progress = "Fetching",
   .path = NULL,
   .call = rlang::current_env()
 )
@@ -31,7 +33,9 @@ When \code{NA} this returns all results. When \code{NULL}, uses the Entrez defau
 Note that when using pagination with web history, it is possible that slightly more than
 \code{retmax} results will be returned.}
 
-\item{retmode}{character: requested document format.}
+\item{retmode}{character: requested document file format.}
+
+\item{rettype}{character: requested document type.}
 
 \item{.method}{HTTP verb. If \code{NA}, a sensible default is chosen based on the request parameters.}
 
@@ -46,7 +50,16 @@ When set to an integer, no more than \code{.pagniate} items will be requested pe
 When \code{FALSE} or \code{0}, only one API request is sent.}
 
 \item{.process}{function that processes the API results.
-Can be a function or builtin processor as described in \code{\link{process}}.}
+Can be a function or builtin processor as described in \code{\link{process}}.
+Additional builtin processors are available:
+\itemize{
+\item \code{"uilist"} to extract a list of IDs (suitable for \code{rettype = "uilist"}),
+\item \code{NA} to use a sensible choice based on parameters. In particular, for \code{"uilist"}
+requests, it will return an \code{\link{id_list}} object.
+}}
+
+\item{.progress}{controls progress bar; see the \code{progress} argument of
+\code{\link[httr2:req_perform_iterative]{httr2::req_perform_iterative()}}.}
 
 \item{.path}{path specification for saving raw responses.
 See \code{path} argument of \code{\link[httr2:req_perform_iterative]{httr2::req_perform_iterative()}}.}
@@ -67,8 +80,7 @@ This helper supports pagination if you specify \code{retmax}.
 Other API methods: 
 \code{\link{einfo}()},
 \code{\link{elink}()},
-\code{\link{entrez_count}()},
-\code{\link{entrez_translate}()},
+\code{\link{entrez_validate}()},
 \code{\link{epost}()},
 \code{\link{esearch}()},
 \code{\link{esummary}()}

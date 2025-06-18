@@ -38,7 +38,7 @@ endpoint.
 Other API methods: 
 \code{\link{efetch}()},
 \code{\link{elink}()},
-\code{\link{entrez_translate}()},
+\code{\link{entrez_validate}()},
 \code{\link{epost}()},
 \code{\link{esearch}()},
 \code{\link{esummary}()}

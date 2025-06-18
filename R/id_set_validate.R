@@ -1,19 +1,17 @@
 #' Look up accessions and other IDs on Entrez
 #' 
 #' Passes the provided IDs through Entrez which has the effect of normalising the
-#' accepted UIDs to the requested `idtype`, and rejecting invalid UIDs.
+#' accepted UIDs, and removing invalid UIDs.
 #' For web history lists, this forces results to be freshly downloaded
 #' (unlike [`as_id_list()`] which can use cached results).
 #' 
 #' @family API methods
-#' @param idtype if `NULL` return Entrez numeric IDs; if `"acc"` return accessions.
 #' @inheritParams epost
 #' @inheritParams efetch
 #' @return [`id_list`] object
 #' @export
-entrez_translate <- function(
+entrez_validate <- function(
   id_set,
-  idtype = NULL,
   .paginate = 5000L,
   .path = NULL,
   .call = current_env()
@@ -22,17 +20,15 @@ entrez_translate <- function(
   if (is_web_history(id_set)) {
     download_web_history(id_set, .paginate = .paginate, .path = .path, .call = .call)
   } else {
-    ids <- efetch(
+    efetch(
       id_set,
       retmode = "xml",
       rettype = "uilist",
-      idtype = idtype,
-      .process = function(doc) { doc |> xml_find_all("/IdList/Id") |> xml_text() },
+      .process = process_xml_eFetchResult_uilist_with_db(entrez_database(id_set)),
       .paginate = .paginate,
       .path = .path,
       .call = .call
     )
-    id_list(db = entrez_database(id_set), ids = ids)
   }
 }
 
@@ -53,6 +49,16 @@ as_id_list <- function(x, .paginate = 5000L, .path = NULL, .call = current_env()
   }
 
   id_list(entrez_database(x), ids)
+}
+prefer_id_list <- function(x) {
+  if (is_id_list(x)) return(x)
+  
+  ids <- wh_ids_get(x)
+  if (!is.null(ids)) {
+    return(id_list(entrez_database(x), ids))
+  }
+
+  x
 }
 
 download_web_history <- function(id_set, .paginate = 5000L, .path = NULL, .call = current_env()) {

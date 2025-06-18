@@ -16,18 +16,18 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Collate: 
-    'utils.R'
-    'id_set.R'
-    'convert.R'
     'count.R'
+    'process.R'
     'fetch.R'
+    'id_set.R'
+    'id_set_validate.R'
     'info.R'
     'jentre-package.R'
-    'process.R'
     'link.R'
     'post.R'
     'request.R'
     'search.R'
+    'utils.R'
 Depends:
     R (>= 4.1.0)
 Imports: 

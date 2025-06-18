@@ -9,8 +9,8 @@
 #' @return integer number of entries.
 #' @inheritParams esearch
 #' @export
-entrez_count <- function(id_set, .call = rlang::caller_env()) {
-  check_id_set(id_set)
+entrez_count <- function(id_set, .call = current_env()) {
+  check_id_set(id_set, call = .call)
 
   if (is_id_list(id_set)) {
     return(vctrs::vec_size(id_set))
@@ -24,7 +24,7 @@ entrez_count <- function(id_set, .call = rlang::caller_env()) {
   len
 }
 
-entrez_count_online <- function(id_set, .call = rlang::caller_env()) {
+entrez_count_online <- function(id_set, .call = caller_env()) {
   check_web_history(id_set, call = .call)
 
   params <- rlang::list2(

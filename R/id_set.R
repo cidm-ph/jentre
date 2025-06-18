@@ -24,7 +24,7 @@ NULL
 #' @rdname id_set
 #' @param db name of the associated Entrez database (e.g. `"biosample"`).
 #' @param ids UIDs, coercible to a character vector (can be accessions or GI numbers).
-#' @seealso [`entrez_translate()`] and [`entrez_count()`]
+#' @seealso [`entrez_validate()`] and [`entrez_count()`]
 #' @returns
 #'  * For `id_list()` and `as_id_list()` an `id_list` vector.
 #'  * For `web_history()` a `web_history` object.
