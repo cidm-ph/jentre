@@ -235,7 +235,7 @@ process_xml_LinkSet_df_one_to_one <- function(doc) {
   links <- xml_find_all(doc, "LinkSet/LinkSetDb")
   vctrs::data_frame(
     db_from = links |> xml2::xml_find_first("./ancestor::LinkSet/DbFrom") |> xml_text(),
-    id_from = links |> xml_find_all("./ancestor::LinkSet/IdList/Id", flatten = FALSE) |> xml_text_from_list() |> purrr::map(list),
+    id_from = links |> xml_find_all("./ancestor::LinkSet/IdList/Id", flatten = FALSE) |> xml_text_from_list() |> list(),
     db_to = links |> xml_find_all("./DbTo") |> xml_text(),
     linkname = links |> xml_find_all("./LinkName") |> xml_text(),
     id_to = links |> xml_find_all("./Link/Id", flatten = FALSE) |> purrr::map(xml_text),

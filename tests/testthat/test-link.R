@@ -4,6 +4,8 @@ test_that("parses 1-to-1 link format", {
   output <- jentre:::process_xml_LinkSet_df_one_to_one(doc)
   expect_s3_class(output, "data.frame")
   expect_equal(output$id_to, rep(list("1074779"), 9))
+  expect_type(output$id_from, "list")
+  expect_type(output$id_from[[1]], "character")
 })
 
 test_that("parses many-to-many link format", {
@@ -14,6 +16,8 @@ test_that("parses many-to-many link format", {
   expect_s3_class(output, "data.frame")
   exp <- c("1256016", "1231393", "1229280", "1222596", "1198110", "967744", "224116")
   expect_equal(output$id_to, list(exp))
+  expect_type(output$id_from, "list")
+  expect_type(output$id_from[[1]], "character")
 })
 
 test_that("parses many-to-many link format with multiple linknames", {
