@@ -114,7 +114,12 @@ wh_webenv <- function(x) vctrs::field(x, "WebEnv")
 wh_qrykey <- function(x) vctrs::field(x, "query_key")
 wh_ids_set <- function(x, ids) {
   stopifnot(is_web_history(x))
-  rlang::env_poke(attr(x, "data"), "len", length(ids))
+  check_character(ids, allow_na = FALSE, allow_null = TRUE)
+  old_ids <- wh_ids_get(x)
+  if (!is.null(old_ids) && !setequal(old_ids, ids)) {
+    cli::cli_warn("Overwriting IDs {old_ids} -> {ids}: {format(x)}")
+  }
+  wh_len_set(x, length(ids))
   rlang::env_poke(attr(x, "data"), "ids", ids)
 }
 wh_ids_get <- function(x) {
@@ -122,6 +127,11 @@ wh_ids_get <- function(x) {
 }
 wh_len_set <- function(x, length) {
   stopifnot(is_web_history(x))
+  check_scalar_integer(length)
+  old_len <- wh_len_get(x)
+  if (!is.na(old_len) && old_len != length) {
+    cli::cli_warn("Overwriting length {old_len} -> {length}: {format(x)}")
+  }
   rlang::env_poke(attr(x, "data"), "len", length)
 }
 wh_len_get <- function(x) {
