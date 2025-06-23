@@ -6,6 +6,7 @@ test_that("parses 1-to-1 link format", {
   expect_equal(output$id_to, rep(list("1074779"), 9))
   expect_type(output$id_from, "list")
   expect_type(output$id_from[[1]], "character")
+  expect_equal(lengths(output$id_from), rep(1L, 9))
 })
 
 test_that("parses many-to-many link format", {
@@ -18,6 +19,7 @@ test_that("parses many-to-many link format", {
   expect_equal(output$id_to, list(exp))
   expect_type(output$id_from, "list")
   expect_type(output$id_from[[1]], "character")
+  expect_equal(lengths(output$id_from), 10)
 })
 
 test_that("parses many-to-many link format with multiple linknames", {
