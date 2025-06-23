@@ -60,18 +60,18 @@ as_function <- function(
     if (exists(x, envir = envir, mode = "function")) {
       get(x, envir = envir, mode = "function")
     } else {
-      cli::cli_abort(c(
-        "{.val {x}} is not an allowed choice for {.arg {arg}}",
-        "i" = "Choose from options: {.val {list_names(envir)}}, or provide a function"
-      ), call = call)
+      allowed <- list_names(envir)
+      msg <- "Choose from options: {.val {allowed}}, or provide a function"
+      if (length(allowed) < 1L) msg <- "Provide a function instead"
+      cli::cli_abort(c("{.val {x}} is not an allowed choice for {.arg {arg}}", "i" = msg), call = call)
     }
   } else if (rlang::is_function(x)) {
     return(x)
   } else {
-    cli::cli_abort(c(
-      "{.arg {arg}} must be a function, not {.val {x}}",
-        "i" = "Provide a function or choose from options: {.val {list_names(envir)}}"
-    ), call = call)
+    allowed <- list_names(envir)
+    msg <- "Provide a function or choose from options: {.val {allowed}}"
+    if (length(allowed) < 1L) msg <- "Provide a function instead"
+    cli::cli_abort(c("{.arg {arg}} must be a function, not {.val {x}}", "i" = msg), call = call)
   }
 }
 
