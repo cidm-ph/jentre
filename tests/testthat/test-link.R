@@ -57,3 +57,11 @@ test_that("link from WH works", {
   # the call caches the full ID list
   expect_length(wh_ids_get(wh), 4124L)
 })
+
+test_that("elink can be called on empty set", {
+  replay_requests("elink_empty.xml")
+
+  empty_set <- id_list("biosample")
+  result <- elink(empty_set, "assembly", .process = "flat")
+  expect_true(nrow(result) == 0L)
+})

@@ -108,7 +108,7 @@ check_arg <- function(test, what) {
     if (!missing(x)) {
       if (test(x)) {
         if (!allow_na && any(is.na(x))) {
-          cli::cli_abort("{.arg {arg}} can't contain NA values.", call = call)
+          cli::cli_abort("{.arg {arg}} can't contain NA values.", ..., call = call)
         }
         return(invisible(NULL))
       }
@@ -121,11 +121,16 @@ check_arg <- function(test, what) {
     if (allow_na) what[length(what) + 1] <- "`NA`"
     if (allow_null) what[length(what) + 1] <- "`NULL`"
     cli::cli_abort("{.arg {arg}} must be {.or {what}}, not {.obj_type_friendly {x}}.", ..., call = call)
+    invisible(x)
   }
 }
 
 check_character <- check_arg(rlang::is_character, "a character vector")
 check_scalar_character <- check_arg(rlang::is_scalar_character, "a character scalar")
+check_scalar_character_nonempty <- check_arg(
+  \(x) rlang::is_scalar_character(x) && nchar(x) > 0L,
+  "a nonempty character scalar"
+)
 check_scalar_integer <- check_arg(rlang::is_scalar_integer, "a scalar integer")
 check_scalar_positive_integer <- check_arg(
   \(x) rlang::is_scalar_integer(x) && x > 0L,

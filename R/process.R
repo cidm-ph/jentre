@@ -36,10 +36,10 @@ process_response <- function(
   doc,
   fn,
   envir = .process_common,
-  call = rlang::caller_env(),
+  call = caller_env(),
   arg = rlang::caller_arg(fn)
 ) {
-  fn <- as_function(fn, arg = arg, call = call)
+  fn <- as_function(fn, envir = envir, arg = arg, call = call)
   rlang::try_fetch(
     fn(doc),
     error = function(cnd) {
@@ -53,9 +53,10 @@ as_function <- function(
   x,
   envir = emptyenv(),
   arg = rlang::caller_arg(x),
-  call = rlang::caller_env()
+  call = caller_env()
 ) {
   if (is.character(x)) {
+    check_scalar_character_nonempty(x)
     if (exists(x, envir = envir, mode = "function")) {
       get(x, envir = envir, mode = "function")
     } else {
