@@ -91,6 +91,7 @@ new_request <- function(
   if (length(dot_params) > 0) {
     known_dot_params <- rlang::fn_fmls_names(entrez_request)
     known_dot_params <- known_dot_params[startsWith(known_dot_params, ".") & (known_dot_params != "...")]
+    known_dot_params <- setdiff(known_dot_params, dot_params)
     cli::cli_abort(c(
       "Unknown Entrez param{?s} {.field {dot_params}}",
        "i" = "Did you mean {.or {.arg {known_dot_params}}}?"
