@@ -29,7 +29,7 @@ NULL
 process_identity <- function(doc) {
   list(doc)
 }
-.process_common <- new.env(parent = emptyenv())
+.process_common <- rlang::new_environment()
 .process_common$identity <- process_identity
 
 process_response <- function(
@@ -44,7 +44,7 @@ process_response <- function(
     fn(doc),
     error = function(cnd) {
       cnd$call <- call(arg)
-      rlang::abort("Failed to process API response", parent = cnd, call = call)
+      rlang::abort("Failed to process API response.", parent = cnd, call = call)
     }
   )
 }
@@ -61,17 +61,17 @@ as_function <- function(
       get(x, envir = envir, mode = "function")
     } else {
       allowed <- list_names(envir)
-      msg <- "Choose from options: {.val {allowed}}, or provide a function"
-      if (length(allowed) < 1L) msg <- "Provide a function instead"
-      cli::cli_abort(c("{.val {x}} is not an allowed choice for {.arg {arg}}", "i" = msg), call = call)
+      msg <- "Choose from options: {.val {allowed}}, or provide a function."
+      if (length(allowed) < 1L) msg <- "Provide a function instead."
+      cli::cli_abort(c("{.val {x}} is not an allowed choice for {.arg {arg}}.", "i" = msg), call = call)
     }
   } else if (rlang::is_function(x)) {
     return(x)
   } else {
     allowed <- list_names(envir)
-    msg <- "Provide a function or choose from options: {.val {allowed}}"
-    if (length(allowed) < 1L) msg <- "Provide a function instead"
-    cli::cli_abort(c("{.arg {arg}} must be a function, not {.val {x}}", "i" = msg), call = call)
+    msg <- "Provide a function or choose from options: {.val {allowed}}."
+    if (length(allowed) < 1L) msg <- "Provide a function instead."
+    cli::cli_abort(c("{.arg {arg}} must be a function, not {.val {x}}.", "i" = msg), call = call)
   }
 }
 
@@ -88,7 +88,7 @@ check_xml_root <- function(doc, expected, call = rlang::caller_env()) {
   root <- xml2::xml_root(doc) |> xml2::xml_name()
   if (root != expected) {
     cli::cli_abort(
-      "Incorrect XML root node {.field <{root}>}, expecting {.field <{expected}>}",
+      "Incorrect XML root node {.field <{root}>}, expecting {.field <{expected}>}.",
       call = call
     )
   }
@@ -104,5 +104,7 @@ xml_text_from_list <- function(x) {
 tibble_cnv <- function(df) {
   if (rlang::is_installed("tibble")) {
     tibble::as_tibble(df)
+  } else {
+    df
   }
 }

@@ -224,11 +224,12 @@ process_xml_eLinkResult_flat <- function(doc) {
     cli::cli_abort("Can't process history server result into a flat data frame")
   }
 
-  if (n_linkset == n_source) {
+  df <- if (n_linkset == n_source) {
     process_xml_LinkSet_df_one_to_one(doc)
   } else {
     process_xml_LinkSet_df_many_to_many(doc)
-  } |> tibble_cnv()
+  }
+  tibble_cnv(df)
 }
 
 process_xml_LinkSet_df_one_to_one <- function(doc) {
