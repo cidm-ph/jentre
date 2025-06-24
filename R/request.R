@@ -152,6 +152,8 @@ entrez_api_key <- function(default = NULL) {
   default
 }
 
+.info <- rlang::new_environment()
+
 debug_request <- function(type, msg) {
   if (type == 2) { # req header
     x <- readBin(msg, character())
@@ -160,18 +162,63 @@ debug_request <- function(type, msg) {
       strsplit(lines[[1]], " ", fixed = TRUE)[[1]][[2]],
       "https://eutils.ncbi.nlm.nih.gov"
     )
+    .info$endpoint <- gsub("\\.fcgi$", "", basename(url$path))
+    .info$data <- url$query
+    .info$body <- character()
+  } else if (type == 4) { # req body
+    x <- readBin(msg, character())
+    .info$body <- c(.info$body, x)
+  } else if (type == 1) { # resp headers
+    x <- readBin(msg, character())
+    lines <- unlist(strsplit(x, "\r?\n", useBytes = TRUE))
+    if (startsWith(lines[[1]], "HTTP")) {
+      msg <- "{.strong {(.info$endpoint)}}"
+      parm <- .info$data[setdiff(names(.info$data), c("tool", "email", "api_key"))]
+      if (length(parm) > 0L) {
+        msg <- paste0(msg, " ", format_kv(parm))
+      }
 
-    ep <- gsub("\\.fcgi$", "", basename(url$path))
-    data <- url$query
-    parm <- data[setdiff(names(data), c("tool", "email", "api_key"))]
-    if (length(parm) > 0) {
-      parm <- paste0(
-        paste0("{.field ", names(parm), "}"),
-        "=",
-        paste0("{.val ", format(unname(parm)), "}"),
-        collapse = " "
-      )
+      req_body <- list()
+      if (length(.info$body) > 0L) {
+        req_body <- httr2::url_query_parse(.info$body)
+      }
+      if (length(req_body) > 0L) {
+        msg <- paste0(msg, " {cli::symbol$star} ", format_kv(req_body))
+      }
+      cli::cli_alert(msg)
     }
-    cli::cli_alert(paste0("{.strong {ep}} ", parm))
   }
+}
+
+format_kv <- function(x) {
+  keys <- names(x)
+  vals <- format(unname(x))
+  suff <- rep("", length(x))
+
+  # deal with id="a,b,c,d" 
+  commas <- gregexpr(",", vals)
+  commas <- regmatches(vals, commas) |> lengths()
+  vals <- gsub(",.*,", ",{cli::symbol$ellipsis},", vals)
+  suff[commas > 0L] <-  paste0("[", commas[commas > 0L] + 1L, "]")
+
+  # deal with id="a" id="b" id="c" id="d"
+  group_l <- keys == keys[seq_along(keys) + 1]
+  group_r <- keys == c(NA_character_, keys[seq_along(keys) - 1])
+  group_l[is.na(group_l)] <- FALSE
+  group_r[is.na(group_r)] <- FALSE
+  group_n <- sapply(keys, \(x) sum(keys == x) - 2)
+  group_start <- group_l & (group_n > 1L)
+  elide <- group_l & group_r & (group_n > 1L)
+  suff[group_start] <- paste0(" {cli::symbol$ellipsis}{cli::symbol$times}", group_n[group_start])
+  keys <- keys[!elide]
+  vals <- vals[!elide]
+  suff <- suff[!elide]
+
+  paste0(
+    paste0("{.field ", keys, "}"),
+    "=",
+    paste0("{.val ", vals, "}"),
+    suff,
+    collapse = " "
+  )
 }
