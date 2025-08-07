@@ -1,9 +1,9 @@
 #' ELink API for fetching links between databases
-#' 
+#'
 #' `elink()` offers direct access to the ELink API endpoint, which has many different
 #' input and output formats depending on parameters. If you just want a one-to-one
 #' mapping of `neighbor` links, use `elink_map()`, which handles this for you.
-#' 
+#'
 #' @section One-to-one mapping:
 #' Note that some ways of calling this API on multiple UIDs result in the one-to-one
 #' association of the input and output sets getting lost. The way around this is to
@@ -12,7 +12,7 @@
 #' history token as input, there is no corresponding way to ensure one-to-one mapping.
 #' To ensure that the result is always one-to-one, use `elink_map()`, which may make
 #' several API requests to achieve the result.
-#' 
+#'
 #' @family API methods
 #' @inheritParams entrez_request
 #' @param id_set ID set object.

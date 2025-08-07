@@ -1,8 +1,8 @@
 #' Search Entrez databases
-#' 
+#'
 #' The search term field names are documented in the EInfo API endpoint:
 #' see [`einfo()`].
-#' 
+#'
 #' @family API methods
 #' @param term search query.
 #' @param db Entrez database name.
@@ -126,7 +126,7 @@ esearch <- function(
       ) |>
       httr2::resps_successes() |>
       httr2::resps_data(search_resps_data(.verbose, .call))
-    
+
     id_list(db, ids)
   }
 }
@@ -159,10 +159,10 @@ check_xml_eSearchResult <- function(doc) {
 
 inform_xml_eSearchResult <- function(doc, verbose = TRUE) {
   if (verbose) {
-    count <- xml_find_first(doc, "/eSearchResult/Count") |> xml2::xml_integer()
-    translation <- xml_find_first(doc, "//QueryTranslation") |> xml_text()
+    count <- xml_find_first(doc, "/eSearchResult/Count") |> xml2::xml_integer() # nolint: object_usage_linter
+    translation <- xml_find_first(doc, "//QueryTranslation") |> xml_text() # nolint: object_usage_linter
     cli::cli_alert_info(
-      "{.field eSearch} query {.val {translation}} has {.strong {count}} results",
+      "{.field eSearch} query {.val {translation}} has {.strong {count}} result{?s}",
       class = "esearch_info"
     )
   }
@@ -182,7 +182,7 @@ process_xml_eSearchResult_webhist <- function(db) {
 }
 
 process_xml_eSearchResult_count <- function(doc) {
-  doc |> 
+  doc |>
     xml_find_first("/eSearchResult/Count") |>
     xml2::xml_integer()
 }

@@ -8,7 +8,7 @@ parse_response <- function(resp, retmode, ..., errors = TRUE, call = caller_env(
     xml = httr2::resp_body_xml(resp, ...),
     json = httr2::resp_body_json(resp, ...),
     httr2::resp_body_string(resp, ...)
-  ) 
+  )
   if (errors && retmode == "xml") raise_xml_error(doc, call = call)
   doc
 }
@@ -75,7 +75,7 @@ iterate_body_form <- function(..., .multi = "error", .call = caller_env()) {
   lengths <- sapply(params, length)
   stopifnot(all(lengths == lengths[[1]]))
   batch_env <- environment()
-  
+
   function(resp, req) {
     values <- Map(\(x) unlist(utils::head(x, n = 1)), params)
     if (sapply(values, length)[[1]] == 0) return(NULL)

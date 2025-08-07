@@ -1,10 +1,10 @@
 #' Get details about Entrez databases
-#' 
+#'
 #' These functions call the EInfo endpoint. `einfo()` provides the number
 #' of entries in the databases, the name and description, list of terms
 #' usable in the query syntax, and list of link names usable with the ELink
 #' endpoint.
-#' 
+#'
 #' @param db name of database to provide information about.
 #' @param retmode response format.
 #' @param version response format version.

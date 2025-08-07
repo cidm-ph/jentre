@@ -1,12 +1,12 @@
 #' Construct a request to the Entrez API
-#' 
+#'
 #' This is a low-level helper that builds a request object but does not
 #' perform the request. In general you'll likely use higher-level methods
 #' like [`efetch()`] instead.
-#' 
+#'
 #' `email`, `tool`, and `api_key` have default values but these can be
 #' overridden, or can be removed by setting them to `NULL`.
-#' 
+#'
 #' @section API limits:
 #' The Entrez APIs are rate limited.
 #' Requests in this package respect the API headers returned by Entrez.
@@ -16,13 +16,13 @@
 #'   * the API parameter `entrez_key` provided to any API request function,
 #'   * the [option][base::options] `"jentre.api_key"`, then
 #'   * the environment variable `ENTREZ_KEY`.
-#' 
+#'
 #' You can check the value is found properly using `entrez_api_key()`.
 #' If no API key is set, a warning will be displayed. This can be suppressed
 #' by setting the option `"jentre.silence_api_warning"` to `TRUE`.
-#' 
+#'
 #' [entrez api key]: https://support.nlm.nih.gov/kbArticle/?pn=KA-05317
-#' 
+#'
 #' @param endpoint Entrez endpoint name (e.g. `"efetch.fcgi"`).
 #' @param ... additional API parameters (refer to Entrez documentation).
 #'   Any set to `NULL` are removed.
@@ -94,7 +94,7 @@ new_request <- function(
     known_dot_params <- setdiff(known_dot_params, dot_params)
     cli::cli_abort(c(
       "Unknown Entrez param{?s} {.field {dot_params}}",
-       "i" = "Did you mean {.or {.arg {known_dot_params}}}?"
+      "i" = "Did you mean {.or {.arg {known_dot_params}}}?"
     ), call = .call)
   }
 
@@ -146,7 +146,7 @@ entrez_api_key <- function(default = NULL) {
   if (rlang::is_zap(api_key)) return(default)
   if (!is.null(api_key)) return(api_key)
 
-  api_key <- Sys.getenv('ENTREZ_KEY')
+  api_key <- Sys.getenv("ENTREZ_KEY")
   if (nchar(api_key) > 0) return(api_key)
 
   default
@@ -195,7 +195,7 @@ format_kv <- function(x) {
   vals <- format(unname(x))
   suff <- rep("", length(x))
 
-  # deal with id="a,b,c,d" 
+  # deal with id="a,b,c,d"
   commas <- gregexpr(",", vals)
   commas <- regmatches(vals, commas) |> lengths()
   vals <- gsub(",.*,", ",{cli::symbol$ellipsis},", vals)

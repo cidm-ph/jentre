@@ -19,4 +19,4 @@ test_that("fetching full documents works", {
     xml2::xml_find_all(doc, "//BioSample/Ids/Id[@is_primary='1']") |> xml2::xml_text()
   })
   expect_equal(y, c("SAMN45830305", "SAMN45830304"))
-  })
+})

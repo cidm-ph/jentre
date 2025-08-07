@@ -1,10 +1,10 @@
 #' Look up accessions and other IDs on Entrez
-#' 
+#'
 #' Passes the provided IDs through Entrez which has the effect of normalising the
 #' accepted UIDs, and removing invalid UIDs.
 #' For web history lists, this forces results to be freshly downloaded
 #' (unlike [`as_id_list()`] which can use cached results).
-#' 
+#'
 #' @family API methods
 #' @inheritParams epost
 #' @inheritParams efetch
@@ -43,7 +43,7 @@ as_id_list <- function(x, .paginate = 5000L, .path = NULL, .call = current_env()
   
   ids <- wh_ids_get(x)
   if (is.null(ids)) {
-    res <- download_web_history(x, .paginate = .paginate, .path = .path, .call = .call) 
+    res <- download_web_history(x, .paginate = .paginate, .path = .path, .call = .call)
     ids <- il_ids_get(res)
     wh_ids_set(x, ids)
   }

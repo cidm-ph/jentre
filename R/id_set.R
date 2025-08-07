@@ -2,25 +2,25 @@
 NULL
 
 #' Entrez identifier sets
-#' 
+#'
 #' Many Entrez APIs accept either a UID list or tokens that point to a result stored
 #' on its history server. The classes here wrap these and keep track of the
 #' database name that the identifiers belong to. Most of the API helpers in this
 #' package are generic over the type of ID set and so can be used the same way with
 #' either type. For large numbers of UIDs, the web history versions are generally
 #' recommended to avoid running into server-side request timeouts.
-#' 
+#'
 #' `id_list` is a vector and can be manipulated to take subsets (e.g. `id_set[1:10]` or
 #' `tail(id_set)`).
-#' 
+#'
 #' `web_history` is an opaque reference to an ID list stored on the Entrez
 #' history server. Through the course of API calls, information about the length or
 #' the actual list of IDs may be discovered and cached, avoiding subsequent API calls.
 #' `as_id_list()` can be used to extract the list of IDs.
-#' 
+#'
 #' Convert `id_list` to `web_history` with [`epost()`].
 #' Convert `web_history` to `id_list` with `as_id_list()`.
-#' 
+#'
 #' @rdname id_set
 #' @param db name of the associated Entrez database (e.g. `"biosample"`).
 #' @param ids UIDs, coercible to a character vector (can be accessions or GI numbers).
@@ -192,7 +192,7 @@ check_compatible_db <- function(
 }
 
 #' Check ID set is well formed
-#' 
+#'
 #' @param x ID set object.
 #' @param database name of intended database.
 #'   If `NULL` the database name is not checked.
@@ -217,7 +217,7 @@ check_id_set <- function(
   }
 
   if (!is.null(database)) {
-    actual_db <- entrez_database(x) 
+    actual_db <- entrez_database(x)
     if (database != actual_db) {
       cli::cli_abort(c(
         "{.arg {arg}} is an ID set from the wrong Entrez database",

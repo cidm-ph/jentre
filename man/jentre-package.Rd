@@ -18,6 +18,15 @@ Entrez API usage is subject to guidelines that are available at the URL above.
 Entrez datasets are also subject to copyright. Refer to the NCBI policies at
 \url{https://www.ncbi.nlm.nih.gov/home/about/policies/} for details.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/cidm-ph/jentre}
+  \item \url{https://cidm-ph.github.io/jentre/}
+  \item Report bugs at \url{https://github.com/cidm-ph/jentre/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Carl Suster \email{Carl.Suster@health.nsw.gov.au} (\href{https://orcid.org/0000-0001-7021-9380}{ORCID})
 

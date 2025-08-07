@@ -1,5 +1,5 @@
 #' Register UIDs with the Entrez history server
-#' 
+#'
 #' @param id_set an [`id_list`] object.
 #' @param WebEnv either a character to pass on as-is, or a [`web_history`] object.
 #' @inheritParams entrez_request

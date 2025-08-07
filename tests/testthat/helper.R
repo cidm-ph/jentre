@@ -1,5 +1,5 @@
 resp_doc_get <- function(path) {
-  path <- test_path("../responses", path)
+  path <- testthat::test_path("../responses", path)
   readBin(path, "raw", file.size(path))
 }
 

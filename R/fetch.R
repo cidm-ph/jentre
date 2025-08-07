@@ -1,8 +1,8 @@
 #' Fetch records from Entrez
-#' 
+#'
 #' Fetching can be slow, and Entrez will time out requests that take too long.
 #' This helper supports pagination if you specify `retmax`.
-#' 
+#'
 #' @family API methods
 #' @param id_set ID set object.
 #' @param retstart integer: index of first result (starts from 0).
@@ -65,11 +65,11 @@ efetch <- function(
 }
 
 #' Fetch document summaries from Entrez
-#' 
+#'
 #' ESummary is faster than EFetch because it only interacts with the frontend
 #' rather than the full database. It contains more limited information.
 #' Consider adding `version = "2.0"` to request the revised output format.
-#' 
+#'
 #' @family API methods
 #' @param version character: requested format version.
 #' @inheritParams efetch
