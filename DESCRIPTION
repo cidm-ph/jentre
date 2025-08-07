@@ -17,6 +17,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Collate: 
     'count.R'
+    'ena.R'
     'process.R'
     'fetch.R'
     'id_set.R'
@@ -43,3 +44,5 @@ Suggests:
     tibble,
     withr
 Config/testthat/edition: 3
+URL: https://github.com/cidm-ph/jentre
+BugReports: https://github.com/cidm-ph/jentre/issues
