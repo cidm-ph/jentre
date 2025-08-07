@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.1.3
 pkgdown_sha: ~
 articles: {}
-last_built: 2025-08-07T05:27Z
+last_built: 2025-08-07T05:39Z
 urls:
   reference: https://cidm-ph.github.io/jentre/reference
   article: https://cidm-ph.github.io/jentre/articles
