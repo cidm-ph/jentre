@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/cidm-ph/jentre/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/cidm-ph/jentre/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 jentre is a client for the NCBI’s Entrez API.

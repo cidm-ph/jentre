@@ -44,5 +44,5 @@ Suggests:
     tibble,
     withr
 Config/testthat/edition: 3
-URL: https://github.com/cidm-ph/jentre
+URL: https://github.com/cidm-ph/jentre, https://cidm-ph.github.io/jentre/
 BugReports: https://github.com/cidm-ph/jentre/issues
