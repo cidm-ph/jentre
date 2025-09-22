@@ -59,7 +59,9 @@ req_body_form_modify <- function(req, ..., .multi = "error", .call = caller_env(
   if (is.null(req$body) || req$body$type != "form") {
     cli::cli_abort("Can only be used after {.fn httr2::req_body_form}", call = .call)
   }
-  new_body <- utils::modifyList(req$body$data, data)
+  # Allow for repeated names in data: since R tools don't play nicely with this
+  # situation, remove all modified entries from data first.
+  new_body <- utils::modifyList(req$body$data[!names(req$body$data) %in% names(data)], data)
   httr2::req_body_form(req, !!!new_body, .multi = .multi)
 }
 
