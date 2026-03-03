@@ -9,6 +9,7 @@ test_that("request has recommended headers and params by default", {
 })
 
 test_that("simple empty body works", {
+  skip_if_not_installed("httpuv")
   req <- entrez_request("efetch.fcgi", tool = NULL, .method = "POST")
   expect_no_error(httr2::req_dry_run(req))
 })

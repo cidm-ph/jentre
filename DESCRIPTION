@@ -1,7 +1,7 @@
 Package: jentre
 Title: Toolkit for the 'Entrez' API
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
     c(person(given = "Carl",
            family = "Suster",
            email = "Carl.Suster@health.nsw.gov.au",
@@ -15,7 +15,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Collate: 
+Collate:
     'count.R'
     'process.R'
     'fetch.R'
@@ -30,7 +30,7 @@ Collate:
     'utils.R'
 Depends:
     R (>= 4.1.0)
-Imports: 
+Imports:
     cli,
     glue,
     httr2,
@@ -38,7 +38,8 @@ Imports:
     rlang (>= 1.1.0),
     vctrs,
     xml2
-Suggests: 
+Suggests:
+    httpuv,
     testthat (>= 3.0.0),
     tibble,
     withr
