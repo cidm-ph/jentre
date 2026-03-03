@@ -28,7 +28,7 @@
 #' @param .path path specification for saving raw responses.
 #'   See `path` argument of [`httr2::req_perform_iterative()`].
 #' @inheritParams entrez_request
-#' @return output of `.process` from each page of results, combined with [`vctrs::list_unchop()`].
+#' @return output of `.process` from each page of results, combined with [`vctrs::list_combine()`].
 #' @export
 efetch <- function(
   id_set,
@@ -142,7 +142,9 @@ efetch_impl <- function(
   } else {
     n_items <- retmax + retstart - .first_index
   }
-  if (n_items <= .paginate) .paginate <- 0L
+  if (n_items <= .paginate) {
+    .paginate <- 0L
+  }
 
   # subset to the requested range locally, if we can
   if (is_id_list(id_set) && length(id_set) > 1L) {
@@ -155,7 +157,9 @@ efetch_impl <- function(
   if (identical(rettype, "uilist") && rlang::is_na(.process)) {
     .process <- process_xml_eFetchResult_uilist_with_db(entrez_database(id_set))
   }
-  if (rlang::is_na(.process)) .process <- process_identity
+  if (rlang::is_na(.process)) {
+    .process <- process_identity
+  }
 
   params <- rlang::list2(
     !!!entrez_id_params(id_set),

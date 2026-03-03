@@ -7,7 +7,7 @@
 \description{
 Function to turn the parsed response document into meaningful data.
 It must accept one argument, \code{doc}, the parsed response document.
-The return value must be compatible with \code{\link[vctrs:vec_chop]{vctrs::list_unchop()}},
+The return value must be compatible with \code{\link[vctrs:list_combine]{vctrs::list_combine()}},
 e.g. a vector, list, or data frame.
 }
 \details{

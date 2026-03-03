@@ -2,7 +2,7 @@
 #'
 #' Function to turn the parsed response document into meaningful data.
 #' It must accept one argument, `doc`, the parsed response document.
-#' The return value must be compatible with [`vctrs::list_unchop()`],
+#' The return value must be compatible with [`vctrs::list_combine()`],
 #' e.g. a vector, list, or data frame.
 #'
 #' API results are parsed based on the `retmode` parameter. XML documents will

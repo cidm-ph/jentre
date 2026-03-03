@@ -70,7 +70,7 @@ You only need to specify this in internal helper functions that don't need to be
 mentioned in error messages.}
 }
 \value{
-output of \code{.process} from each page of results, combined with \code{\link[vctrs:vec_chop]{vctrs::list_unchop()}}.
+output of \code{.process} from each page of results, combined with \code{\link[vctrs:list_combine]{vctrs::list_combine()}}.
 }
 \description{
 Fetching can be slow, and Entrez will time out requests that take too long.
