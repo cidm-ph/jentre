@@ -55,9 +55,12 @@ entrez_request <- function(
   .verbose = getOption("jentre.verbose", default = TRUE),
   .call = current_env()
 ) {
+  params <- rlang::list2(...)
+  check_named_list(params, allow_na = FALSE, arg = "...")
+
   new_request(
     endpoint,
-    params = rlang::list2(...),
+    params = params,
     .method = .method,
     .multi = .multi,
     .cookies = .cookies,
@@ -76,6 +79,8 @@ new_request <- function(
   .verbose = getOption("jentre.verbose", default = TRUE),
   .call = caller_env()
 ) {
+  check_named_list(params, allow_na = FALSE)
+
   # set default params but allow them to be overridden (or removed with NULL values)
   tool_params <- list(
     email = "Carl.Suster@health.nsw.gov.au",
@@ -90,24 +95,38 @@ new_request <- function(
   dot_params <- names(params)[startsWith(names(params), ".")]
   if (length(dot_params) > 0) {
     known_dot_params <- rlang::fn_fmls_names(entrez_request)
-    known_dot_params <- known_dot_params[startsWith(known_dot_params, ".") & (known_dot_params != "...")]
+    known_dot_params <- known_dot_params[
+      startsWith(known_dot_params, ".") & (known_dot_params != "...")
+    ]
     known_dot_params <- setdiff(known_dot_params, dot_params)
-    cli::cli_abort(c(
-      "Unknown Entrez param{?s} {.field {dot_params}}",
-      "i" = "Did you mean {.or {.arg {known_dot_params}}}?"
-    ), call = .call)
+    cli::cli_abort(
+      c(
+        "Unknown Entrez param{?s} {.field {dot_params}}",
+        "i" = "Did you mean {.or {.arg {known_dot_params}}}?"
+      ),
+      call = .call
+    )
   }
 
-  if (is.null(params$api_key) && !getOption("jentre.silence_api_warning", FALSE)) {
-    cli::cli_alert_warning("No API key was provided. Set {.env ENTREZ_KEY} to reduce rate limiting.")
-    cli::cli_alert_info("More info on API keys: https://support.nlm.nih.gov/kbArticle/?pn=KA-05317")
+  if (
+    is.null(params$api_key) && !getOption("jentre.silence_api_warning", FALSE)
+  ) {
+    cli::cli_alert_warning(
+      "No API key was provided. Set {.env ENTREZ_KEY} to reduce rate limiting."
+    )
+    cli::cli_alert_info(
+      "More info on API keys: https://support.nlm.nih.gov/kbArticle/?pn=KA-05317"
+    )
   }
 
   if (!is.null(.body_params) && .method != "POST") {
-    cli::cli_abort(c(
-      "Only the {.val POST} HTTP method is compatible with {.arg .body_params}",
-      "i" = "You specified a {.arg .method} of {.val { .method}}"
-    ), call = .call)
+    cli::cli_abort(
+      c(
+        "Only the {.val POST} HTTP method is compatible with {.arg .body_params}",
+        "i" = "You specified a {.arg .method} of {.val { .method}}"
+      ),
+      call = .call
+    )
   }
   .body_params <- intersect(as.character(.body_params), names(params))
 
@@ -119,7 +138,11 @@ new_request <- function(
     httr2::req_retry(max_tries = 3L, retry_on_failure = TRUE)
 
   if (.verbose) {
-    req <- httr2::req_options(req, debugfunction = debug_request, verbose = TRUE)
+    req <- httr2::req_options(
+      req,
+      debugfunction = debug_request,
+      verbose = TRUE
+    )
   }
 
   if (!is.null(.cookies) && !is.na(.cookies)) {
@@ -150,11 +173,17 @@ new_request <- function(
 #' @export
 entrez_api_key <- function(default = NULL) {
   api_key <- getOption("jentre.entrez_key")
-  if (rlang::is_zap(api_key)) return(default)
-  if (!is.null(api_key)) return(api_key)
+  if (rlang::is_zap(api_key)) {
+    return(default)
+  }
+  if (!is.null(api_key)) {
+    return(api_key)
+  }
 
   api_key <- Sys.getenv("ENTREZ_KEY")
-  if (nchar(api_key) > 0) return(api_key)
+  if (nchar(api_key) > 0) {
+    return(api_key)
+  }
 
   default
 }

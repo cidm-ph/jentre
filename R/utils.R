@@ -138,3 +138,7 @@ check_scalar_positive_integer <- check_arg(
   \(x) rlang::is_scalar_integer(x) && x > 0L,
   "a positive scalar integer"
 )
+check_named_list <- check_arg(
+  \(x) rlang::is_list(x) && rlang::is_named2(x),
+  "a named list"
+)

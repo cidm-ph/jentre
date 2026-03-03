@@ -17,7 +17,7 @@ test_that("simple empty body works", {
 test_that("default params can be removed", {
   req <- entrez_request("efetch.fcgi", tool = NULL)
   query <- httr2::url_parse(req$url)$query
-  expect(! "tool" %in% names(query), "tool param was unexpectedly set")
+  expect(!"tool" %in% names(query), "tool param was unexpectedly set")
 })
 
 test_that("only mutiple params are put in request body by default", {
@@ -35,7 +35,7 @@ test_that("specific params can be forced into the body", {
   query <- httr2::url_parse(req$url)$query
   expect_equal(req$method, "POST")
   expect_contains(names(req$body$data), "id")
-  expect_true(! "id" %in% names(query))
+  expect_true(!"id" %in% names(query))
 })
 
 test_that("api key can be set with options", {
@@ -46,4 +46,10 @@ test_that("api key can be set with options", {
   withr::with_options(list(jentre.entrez_key = rlang::zap()), {
     expect_equal(entrez_api_key(), NULL)
   })
+})
+
+test_that("additional params must be named", {
+  expect_no_error(new_request("efetch.fcgi", list(x = 1, y = 2)))
+  expect_error(new_request("efetch.fcgi", list(1, 2)))
+  expect_error(new_request("efetch.fcgi", list(1, y = 2)))
 })
