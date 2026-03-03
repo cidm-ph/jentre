@@ -130,9 +130,16 @@ new_request <- function(
     data_params <- names(params)[Map(length, params) > 1L]
     data_params <- union(data_params, .body_params)
     query_params <- setdiff(names(params), data_params)
-    req |>
+    req <- req |>
       httr2::req_url_query(!!!params[query_params], .multi = "error") |>
       httr2::req_body_form(!!!params[data_params], .multi = .multi)
+
+    # https://github.com/r-lib/httr2/issues/835
+    if (is.null(req$body$data)) {
+      req$body$data <- list()
+    }
+
+    req
   } else {
     req |> httr2::req_url_query(!!!params, .multi = .multi)
   }

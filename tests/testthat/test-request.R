@@ -8,6 +8,11 @@ test_that("request has recommended headers and params by default", {
   expect_contains(names(query), c("email", "tool"))
 })
 
+test_that("simple empty body works", {
+  req <- entrez_request("efetch.fcgi", tool = NULL, .method = "POST")
+  expect_no_error(httr2::req_dry_run(req))
+})
+
 test_that("default params can be removed", {
   req <- entrez_request("efetch.fcgi", tool = NULL)
   query <- httr2::url_parse(req$url)$query
@@ -20,7 +25,12 @@ test_that("only mutiple params are put in request body by default", {
 })
 
 test_that("specific params can be forced into the body", {
-  req <- new_request("efetch.fcgi", list(id = 1), .body_params = c("id", "x"), .method = "POST")
+  req <- new_request(
+    "efetch.fcgi",
+    list(id = 1),
+    .body_params = c("id", "x"),
+    .method = "POST"
+  )
   query <- httr2::url_parse(req$url)$query
   expect_equal(req$method, "POST")
   expect_contains(names(req$body$data), "id")
