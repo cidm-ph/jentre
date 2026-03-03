@@ -169,11 +169,13 @@ vec_cast.jentre_id_list.jentre_web_history <- function(x, to, ...) {
   check_compatible_db(x, to, call = caller_env())
   ids <- wh_ids_get(x)
   if (is.null(ids)) {
+    x_arg <- rlang::caller_arg(x)
     stop_incompatible_cast(
-      x, to,
-      x_arg = rlang::caller_arg(x),
+      x,
+      to,
+      x_arg = x_arg,
       to_arg = rlang::caller_arg(to),
-      message = "IDs are not cached; use as_id_list() instead"
+      message = "IDs from web history {.arg {x_arg}} are not yet cached; convert with as_id_list()"
     )
   }
   new_id_list(attr(to, "database"), ids)
