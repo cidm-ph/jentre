@@ -1,4 +1,3 @@
-
 #' Process API results
 #'
 #' Function to turn the parsed response document into meaningful data.
@@ -43,7 +42,7 @@ process_response <- function(
   rlang::try_fetch(
     fn(doc),
     error = function(cnd) {
-      cnd$call <- call(arg)
+      cnd$call <- base::call(arg)
       rlang::abort("Failed to process API response.", parent = cnd, call = call)
     }
   )
@@ -62,16 +61,26 @@ as_function <- function(
     } else {
       allowed <- list_names(envir)
       msg <- "Choose from options: {.val {allowed}}, or provide a function."
-      if (length(allowed) < 1L) msg <- "Provide a function instead."
-      cli::cli_abort(c("{.val {x}} is not an allowed choice for {.arg {arg}}.", "i" = msg), call = call)
+      if (length(allowed) < 1L) {
+        msg <- "Provide a function instead."
+      }
+      cli::cli_abort(
+        c("{.val {x}} is not an allowed choice for {.arg {arg}}.", "i" = msg),
+        call = call
+      )
     }
   } else if (rlang::is_function(x)) {
-    return(x)
+    x
   } else {
     allowed <- list_names(envir)
     msg <- "Provide a function or choose from options: {.val {allowed}}."
-    if (length(allowed) < 1L) msg <- "Provide a function instead."
-    cli::cli_abort(c("{.arg {arg}} must be a function, not {.val {x}}.", "i" = msg), call = call)
+    if (length(allowed) < 1L) {
+      msg <- "Provide a function instead."
+    }
+    cli::cli_abort(
+      c("{.arg {arg}} must be a function, not {.val {x}}.", "i" = msg),
+      call = call
+    )
   }
 }
 
