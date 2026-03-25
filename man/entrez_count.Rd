@@ -23,3 +23,7 @@ If it is a \code{web_history}, this may involve an Entrez API call to get the
 number of entries. In this case the result is cached so that subsequent
 calls don't hit the API again.
 }
+\examples{
+id_set <- id_list("sra", c("39889350", "39889348", "39889347"))
+entrez_count(id_set)
+}

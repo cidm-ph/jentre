@@ -13,6 +13,13 @@
 #'   An XML document with root node `<eInfoResult>` for `einfo()`.
 #' @family API methods
 #' @export
+#'
+#' @examples
+#' library(xml2)
+#'
+#' \dontrun{
+#' einfo("sra") |> xml_find_first("//Description") |> xml_text()
+#' # [1] "SRA Database"}
 einfo <- function(db, ..., retmode = "xml", version = "2.0", .call = rlang::current_env()) {
   params <- rlang::list2(
     db = db,

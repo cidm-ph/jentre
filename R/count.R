@@ -9,6 +9,9 @@
 #' @return integer number of entries.
 #' @inheritParams esearch
 #' @export
+#' @examples
+#' id_set <- id_list("sra", c("39889350", "39889348", "39889347"))
+#' entrez_count(id_set)
 entrez_count <- function(id_set, .call = current_env()) {
   check_id_set(id_set, call = .call)
 

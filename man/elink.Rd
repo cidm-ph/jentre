@@ -103,6 +103,27 @@ To ensure that the result is always one-to-one, use \code{elink_map()}, which ma
 several API requests to achieve the result.
 }
 
+\examples{
+id_set <- id_list("sra", c("39889350", "39889348", "39889347"))
+
+\dontrun{
+links <- elink(id_set, "bioproject", linkname = "sra_bioproject")
+# → elink db="bioproject" dbfrom="sra" retmode="xml" cmd="neighbor" linkname="sra_bioproject"
+#   ★ id="39889350" id="39889348" id="39889347"
+links
+# # A tibble: 3 × 5
+# db_from id_from   db_to      linkname       id_to
+# <chr>   <list>    <chr>      <chr>          <list>
+# 1 sra     <chr [1]> bioproject sra_bioproject <chr [1]>
+# 2 sra     <chr [1]> bioproject sra_bioproject <chr [1]>
+# 3 sra     <chr [1]> bioproject sra_bioproject <chr [1]>
+
+links[c("id_from", "id_to")] |> igraph::graph_from_data_frame()
+# IGRAPH a807b82 DN-- 4 3 --
+# + attr: name (v/c)
+# + edges from a807b82 (vertex names):
+# [1] 39889350->1241475 39889348->1241475 39889347->1241475}
+}
 \seealso{
 Other API methods: 
 \code{\link{efetch}()},

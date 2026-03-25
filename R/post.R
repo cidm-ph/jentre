@@ -7,6 +7,15 @@
 #' @family API methods
 #' @returns A [`web_history`] object usable with other API functions.
 #' @export
+#'
+#' @examples
+#' id_set <- id_list("sra", c("39889350", "39889348", "39889347"))
+#'
+#' \dontrun{
+#' epost(id_set)
+#' # → epost db="sra" ★ id="39889350,…,39889347"[3]
+#' # <entrez@/sra[1]>
+#' # [1] MCID_69c36.#1[3]}
 epost <- function(id_set, ..., WebEnv = NULL, .path = NULL, .call = rlang::current_env()) {
   check_id_list(id_set)
 

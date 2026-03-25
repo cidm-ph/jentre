@@ -46,6 +46,14 @@
 #'  * for `entrez_request()` an `httr2::request` object.
 #'  * for `entrez_api_key()`, the API key as a character, or `default` if no global config exists.
 #' @export
+#'
+#' @examples
+#' library(httr2)
+#'
+#' req <- entrez_request("esearch.fcgi", db = "nucleotide", term = "biomol+trna[prop]")
+#' \dontrun{
+#' # You'll need to perform the request with httr2 and parse it yourself:
+#' req_perform(req) |> resp_body_xml()}
 entrez_request <- function(
   endpoint,
   ...,

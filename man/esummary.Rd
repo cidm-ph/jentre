@@ -77,7 +77,6 @@ For other choices, it can be a vector, list, or data frame.
 \description{
 ESummary is faster than EFetch because it only interacts with the frontend
 rather than the full database. It contains more limited information.
-Consider adding \code{version = "2.0"} to request the revised output format.
 }
 \seealso{
 Other API methods: 

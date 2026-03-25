@@ -78,6 +78,27 @@ For other choices, it can be a vector, list, or data frame.
 Fetching can be slow, and Entrez will time out requests that take too long.
 This helper supports pagination if you specify \code{retmax}.
 }
+\examples{
+library(xml2)
+id_set <- id_list("sra", c("39889350", "39889348", "39889347"))
+
+\dontrun{
+efetch(id_set)
+# → efetch db="sra" retstart="0" retmax="3" retmode="xml" ★ id="39889350,…,39889347"[3]
+# [[1]]
+# {xml_document}
+# <EXPERIMENT_PACKAGE_SET>
+# [1] <EXPERIMENT_PACKAGE>\n  <EXPERIMENT accession="SRX29833825" alias="24-MYP-0283_50325"> ...
+# [2] <EXPERIMENT_PACKAGE>\n  <EXPERIMENT accession="SRX29833823" alias="24-MYP-0273_50325"> ...
+# [3] <EXPERIMENT_PACKAGE>\n  <EXPERIMENT accession="SRX29833822" alias="24-MYP-0270_50325"> ...
+
+extract_alias <- function(document) {
+  xml_find_all(document, "//EXPERIMENT/@alias") |> xml_text()
+}
+efetch(id_set, .process = extract_alias)
+# → efetch db="sra" retstart="0" retmax="3" retmode="xml" ★ id="39889350,…,39889347"[3]
+# [1] "24-MYP-0283_50325" "24-MYP-0273_50325" "24-MYP-0270_50325"}
+}
 \seealso{
 Other API methods: 
 \code{\link{einfo}()},

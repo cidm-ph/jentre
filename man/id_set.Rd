@@ -58,10 +58,13 @@ Many Entrez APIs accept either a UID list or tokens that point to a result store
 on its history server. The classes here wrap these and keep track of the
 database name that the identifiers belong to. Most of the API helpers in this
 package are generic over the type of ID set and so can be used the same way with
-either type. For large numbers of UIDs, the web history versions are generally
-recommended to avoid running into server-side request timeouts.
+either type.
 }
 \details{
+It usually will not make sense to create \code{web_history()} objects directly - they
+are short-lived pointers to results on the Entrez history server and are created
+by other API calls.
+
 \code{id_list} is a vector and can be manipulated to take subsets (e.g. \code{id_set[1:10]} or
 \code{tail(id_set)}).
 
@@ -72,6 +75,9 @@ the actual list of IDs may be discovered and cached, avoiding subsequent API cal
 
 Convert \code{id_list} to \code{web_history} with \code{\link[=epost]{epost()}}.
 Convert \code{web_history} to \code{id_list} with \code{as_id_list()}.
+}
+\examples{
+bioprojects <- id_list("bioproject", c("1241475"))
 }
 \seealso{
 \code{\link[=entrez_validate]{entrez_validate()}} and \code{\link[=entrez_count]{entrez_count()}}

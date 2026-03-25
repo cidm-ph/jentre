@@ -79,3 +79,11 @@ If no API key is set, a warning will be displayed. This can be suppressed
 by setting the option \code{"jentre.silence_api_warning"} to \code{TRUE}.
 }
 
+\examples{
+library(httr2)
+
+req <- entrez_request("esearch.fcgi", db = "nucleotide", term = "biomol+trna[prop]")
+\dontrun{
+# You'll need to perform the request with httr2 and parse it yourself:
+req_perform(req) |> resp_body_xml()}
+}

@@ -10,6 +10,13 @@
 #' @inheritParams efetch
 #' @return [`id_list`] object
 #' @export
+#'
+#' @examples
+#' id_set <- id_list("sra", c("SRX29833825", "SRX29833823", "SRX29833822"))
+#' \dontrun{
+#' entrez_validate(id_set)
+#' # <entrez/sra[3]>
+#' # [1] 39889350 39889348 39889347}
 entrez_validate <- function(
   id_set,
   .paginate = 5000L,
@@ -36,14 +43,26 @@ entrez_validate <- function(
 #' @rdname id_set
 #' @inheritParams esearch
 #' @export
-as_id_list <- function(x, .paginate = 5000L, .path = NULL, .call = current_env()) {
+as_id_list <- function(
+  x,
+  .paginate = 5000L,
+  .path = NULL,
+  .call = current_env()
+) {
   check_id_set(x)
 
-  if (is_id_list(x)) return(x)
-  
+  if (is_id_list(x)) {
+    return(x)
+  }
+
   ids <- wh_ids_get(x)
   if (is.null(ids)) {
-    res <- download_web_history(x, .paginate = .paginate, .path = .path, .call = .call)
+    res <- download_web_history(
+      x,
+      .paginate = .paginate,
+      .path = .path,
+      .call = .call
+    )
     ids <- il_ids_get(res)
     wh_ids_set(x, ids)
   }
@@ -51,8 +70,10 @@ as_id_list <- function(x, .paginate = 5000L, .path = NULL, .call = current_env()
   id_list(entrez_database(x), ids)
 }
 prefer_id_list <- function(x) {
-  if (is_id_list(x)) return(x)
-  
+  if (is_id_list(x)) {
+    return(x)
+  }
+
   ids <- wh_ids_get(x)
   if (!is.null(ids)) {
     return(id_list(entrez_database(x), ids))

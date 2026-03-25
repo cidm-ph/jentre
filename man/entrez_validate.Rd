@@ -30,6 +30,13 @@ accepted UIDs, and removing invalid UIDs.
 For web history lists, this forces results to be freshly downloaded
 (unlike \code{\link[=as_id_list]{as_id_list()}} which can use cached results).
 }
+\examples{
+id_set <- id_list("sra", c("SRX29833825", "SRX29833823", "SRX29833822"))
+\dontrun{
+entrez_validate(id_set)
+# <entrez/sra[3]>
+# [1] 39889350 39889348 39889347}
+}
 \seealso{
 Other API methods: 
 \code{\link{efetch}()},

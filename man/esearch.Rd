@@ -83,6 +83,15 @@ An id set object (either a \code{\link{web_history}} or an \code{\link{id_list}}
 The search term field names are documented in the EInfo API endpoint:
 see \code{\link[=einfo]{einfo()}}.
 }
+\examples{
+\dontrun{
+esearch("mpox virus[orgn]", "biosample")
+# → esearch db="biosample" term="mpox virus[orgn]" retmode="xml" rettype="uilist" usehistory="y"
+# ℹ eSearch query "\"Monkeypox virus\"[Organism]" has 7189 results
+# <entrez@/biosample[1]>
+# [1] MCID_69c36.#1[7189]
+}
+}
 \seealso{
 \url{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESearch}
 

@@ -34,6 +34,13 @@ of entries in the databases, the name and description, list of terms
 usable in the query syntax, and list of link names usable with the ELink
 endpoint.
 }
+\examples{
+library(xml2)
+
+\dontrun{
+einfo("sra") |> xml_find_first("//Description") |> xml_text()
+# [1] "SRA Database"}
+}
 \seealso{
 Other API methods: 
 \code{\link{efetch}()},

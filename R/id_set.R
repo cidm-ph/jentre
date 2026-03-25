@@ -7,8 +7,11 @@ NULL
 #' on its history server. The classes here wrap these and keep track of the
 #' database name that the identifiers belong to. Most of the API helpers in this
 #' package are generic over the type of ID set and so can be used the same way with
-#' either type. For large numbers of UIDs, the web history versions are generally
-#' recommended to avoid running into server-side request timeouts.
+#' either type.
+#'
+#' It usually will not make sense to create `web_history()` objects directly - they
+#' are short-lived pointers to results on the Entrez history server and are created
+#' by other API calls.
 #'
 #' `id_list` is a vector and can be manipulated to take subsets (e.g. `id_set[1:10]` or
 #' `tail(id_set)`).
@@ -30,6 +33,9 @@ NULL
 #'  * For `web_history()` a `web_history` object.
 #'  * For `is_id_set()`, `is_id_list()`, and `is_web_history()` a logical.
 #' @export
+#'
+#' @examples
+#' bioprojects <- id_list("bioproject", c("1241475"))
 id_list <- function(db, ids = character()) {
   check_scalar_character(db, allow_na = FALSE)
   check_character(ids, allow_na = FALSE)

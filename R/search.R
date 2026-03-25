@@ -31,6 +31,15 @@
 #' @return An id set object (either a [`web_history`] or an [`id_list`]).
 #' @seealso <https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESearch>
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' esearch("mpox virus[orgn]", "biosample")
+#' # → esearch db="biosample" term="mpox virus[orgn]" retmode="xml" rettype="uilist" usehistory="y"
+#' # ℹ eSearch query "\"Monkeypox virus\"[Organism]" has 7189 results
+#' # <entrez@/biosample[1]>
+#' # [1] MCID_69c36.#1[7189]
+#' }
 esearch <- function(
   term,
   db,
