@@ -77,7 +77,7 @@ You only need to specify this in internal helper functions that don't need to be
 mentioned in error messages.}
 }
 \value{
-id set object (either a \code{\link{web_history}} or an \code{\link{id_list}}).
+An id set object (either a \code{\link{web_history}} or an \code{\link{id_list}}).
 }
 \description{
 The search term field names are documented in the EInfo API endpoint:

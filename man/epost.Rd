@@ -21,6 +21,9 @@ See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} a
 You only need to specify this in internal helper functions that don't need to be
 mentioned in error messages.}
 }
+\value{
+A \code{\link{web_history}} object usable with other API functions.
+}
 \description{
 Register UIDs with the Entrez history server
 }

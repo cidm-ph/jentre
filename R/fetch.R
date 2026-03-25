@@ -28,7 +28,9 @@
 #' @param .path path specification for saving raw responses.
 #'   See `path` argument of [`httr2::req_perform_iterative()`].
 #' @inheritParams entrez_request
-#' @return output of `.process` from each page of results, combined with [`vctrs::list_combine()`].
+#' @return Combined output of `.process` from each page of results.
+#'   For the default where `.process` does nothing, this will be a list of XML documents.
+#'   For other choices, it can be a vector, list, or data frame.
 #' @export
 efetch <- function(
   id_set,
@@ -68,11 +70,13 @@ efetch <- function(
 #'
 #' ESummary is faster than EFetch because it only interacts with the frontend
 #' rather than the full database. It contains more limited information.
-#' Consider adding `version = "2.0"` to request the revised output format.
 #'
 #' @family API methods
 #' @param version character: requested format version.
 #' @inheritParams efetch
+#' @return Combined output of `.process` from each page of results.
+#'   For the default where `.process` does nothing, this will be a list of XML documents.
+#'   For other choices, it can be a vector, list, or data frame.
 #' @export
 esummary <- function(
   id_set,

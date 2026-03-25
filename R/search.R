@@ -28,7 +28,7 @@
 #' @param .progress controls progress bar; see the `progress` argument of
 #'   [`httr2::req_perform_iterative()`].
 #' @inheritParams entrez_request
-#' @return id set object (either a [`web_history`] or an [`id_list`]).
+#' @return An id set object (either a [`web_history`] or an [`id_list`]).
 #' @seealso <https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESearch>
 #' @export
 esearch <- function(

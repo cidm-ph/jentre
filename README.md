@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/cidm-ph/jentre/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/cidm-ph/jentre/actions/workflows/R-CMD-check.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/jentre)](https://CRAN.R-project.org/package=jentre)
 <!-- badges: end -->
 
 jentre is a client for the NCBI’s Entrez API.
@@ -27,9 +29,12 @@ applications.
 
 ## Installation
 
-You can install the development version of jentre like so:
+You can install jentre like so:
 
 ``` r
+# CRAN release
+install.packages('jentre')
+
 # development version
 install.packages('jentre', repos = c('https://cidm-ph.r-universe.dev', 'https://cloud.r-project.org'))
 ```

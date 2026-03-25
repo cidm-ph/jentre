@@ -6,3 +6,5 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^\.lintr$
+^cran-comments\.md$

@@ -70,7 +70,9 @@ You only need to specify this in internal helper functions that don't need to be
 mentioned in error messages.}
 }
 \value{
-output of \code{.process} from each page of results, combined with \code{\link[vctrs:list_combine]{vctrs::list_combine()}}.
+Combined output of \code{.process} from each page of results.
+For the default where \code{.process} does nothing, this will be a list of XML documents.
+For other choices, it can be a vector, list, or data frame.
 }
 \description{
 Fetching can be slow, and Entrez will time out requests that take too long.

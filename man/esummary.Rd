@@ -69,6 +69,11 @@ See \link[rlang:topic-error-call]{rlang::topic-error-call} and the \code{call} a
 You only need to specify this in internal helper functions that don't need to be
 mentioned in error messages.}
 }
+\value{
+Combined output of \code{.process} from each page of results.
+For the default where \code{.process} does nothing, this will be a list of XML documents.
+For other choices, it can be a vector, list, or data frame.
+}
 \description{
 ESummary is faster than EFetch because it only interacts with the frontend
 rather than the full database. It contains more limited information.

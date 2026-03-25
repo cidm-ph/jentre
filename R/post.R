@@ -5,6 +5,7 @@
 #' @inheritParams entrez_request
 #' @param .path path specification for saving raw responses.
 #' @family API methods
+#' @returns A [`web_history`] object usable with other API functions.
 #' @export
 epost <- function(id_set, ..., WebEnv = NULL, .path = NULL, .call = rlang::current_env()) {
   check_id_list(id_set)
