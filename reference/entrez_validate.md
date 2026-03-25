@@ -53,3 +53,5 @@ Other API methods:
 [`epost()`](https://cidm-ph.github.io/jentre/reference/epost.md),
 [`esearch()`](https://cidm-ph.github.io/jentre/reference/esearch.md),
 [`esummary()`](https://cidm-ph.github.io/jentre/reference/esummary.md)
+
+## Examples

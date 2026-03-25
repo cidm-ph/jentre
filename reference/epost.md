@@ -39,6 +39,11 @@ epost(id_set, ..., WebEnv = NULL, .path = NULL, .call = rlang::current_env())
   You only need to specify this in internal helper functions that don't
   need to be mentioned in error messages.
 
+## Value
+
+A [`web_history`](https://cidm-ph.github.io/jentre/reference/id_set.md)
+object usable with other API functions.
+
 ## See also
 
 Other API methods:
@@ -48,3 +53,5 @@ Other API methods:
 [`entrez_validate()`](https://cidm-ph.github.io/jentre/reference/entrez_validate.md),
 [`esearch()`](https://cidm-ph.github.io/jentre/reference/esearch.md),
 [`esummary()`](https://cidm-ph.github.io/jentre/reference/esummary.md)
+
+## Examples

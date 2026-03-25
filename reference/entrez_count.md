@@ -31,3 +31,11 @@ entrez_count(id_set, .call = current_env())
 ## Value
 
 integer number of entries.
+
+## Examples
+
+``` r
+id_set <- id_list("sra", c("39889350", "39889348", "39889347"))
+entrez_count(id_set)
+#> [1] 3
+```

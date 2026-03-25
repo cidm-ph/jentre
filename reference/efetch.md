@@ -109,8 +109,9 @@ efetch(
 
 ## Value
 
-output of `.process` from each page of results, combined with
-[`vctrs::list_unchop()`](https://vctrs.r-lib.org/reference/vec_chop.html).
+Combined output of `.process` from each page of results. For the default
+where `.process` does nothing, this will be a list of XML documents. For
+other choices, it can be a vector, list, or data frame.
 
 ## See also
 
@@ -121,3 +122,5 @@ Other API methods:
 [`epost()`](https://cidm-ph.github.io/jentre/reference/epost.md),
 [`esearch()`](https://cidm-ph.github.io/jentre/reference/esearch.md),
 [`esummary()`](https://cidm-ph.github.io/jentre/reference/esummary.md)
+
+## Examples

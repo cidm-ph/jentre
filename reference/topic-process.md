@@ -3,7 +3,7 @@
 Function to turn the parsed response document into meaningful data. It
 must accept one argument, `doc`, the parsed response document. The
 return value must be compatible with
-[`vctrs::list_unchop()`](https://vctrs.r-lib.org/reference/vec_chop.html),
+[`vctrs::list_combine()`](https://vctrs.r-lib.org/reference/list_combine.html),
 e.g. a vector, list, or data frame.
 
 ## Details

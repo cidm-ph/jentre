@@ -3,13 +3,11 @@
 on its history server. The classes here wrap these and keep track of the
 database name that the identifiers belong to. Most of the API helpers in this
 package are generic over the type of ID set and so can be used the same way with
-either type. For large numbers of UIDs, the web history versions are generally
-recommended to avoid running into server-side request timeouts."><meta property="og:description" content="Many Entrez APIs accept either a UID list or tokens that point to a result stored
+either type."><meta property="og:description" content="Many Entrez APIs accept either a UID list or tokens that point to a result stored
 on its history server. The classes here wrap these and keep track of the
 database name that the identifiers belong to. Most of the API helpers in this
 package are generic over the type of ID set and so can be used the same way with
-either type. For large numbers of UIDs, the web history versions are generally
-recommended to avoid running into server-side request timeouts."></head><body>
+either type."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -26,6 +24,7 @@ recommended to avoid running into server-side request timeouts."></head><body>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/cidm-ph/jentre/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -47,8 +46,7 @@ recommended to avoid running into server-side request timeouts."></head><body>
 on its history server. The classes here wrap these and keep track of the
 database name that the identifiers belong to. Most of the API helpers in this
 package are generic over the type of ID set and so can be used the same way with
-either type. For large numbers of UIDs, the web history versions are generally
-recommended to avoid running into server-side request timeouts.</p>
+either type.</p>
     </div>
 
     <div class="section level2">
@@ -119,7 +117,10 @@ mentioned in error messages.</p></dd>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>id_list</code> is a vector and can be manipulated to take subsets (e.g. <code>id_set[1:10]</code> or
+    <p>It usually will not make sense to create <code>web_history()</code> objects directly - they
+are short-lived pointers to results on the Entrez history server and are created
+by other API calls.</p>
+<p><code>id_list</code> is a vector and can be manipulated to take subsets (e.g. <code>id_set[1:10]</code> or
 <code>tail(id_set)</code>).</p>
 <p><code>web_history</code> is an opaque reference to an ID list stored on the Entrez
 history server. Through the course of API calls, information about the length or
@@ -133,6 +134,11 @@ Convert <code>web_history</code> to <code>id_list</code> with <code>as_id_list()
     <div class="dont-index"><p><code><a href="entrez_validate.html">entrez_validate()</a></code> and <code><a href="entrez_count.html">entrez_count()</a></code></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">bioprojects</span> <span class="op">&lt;-</span> <span class="fu">id_list</span><span class="op">(</span><span class="st">"bioproject"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1241475"</span><span class="op">)</span><span class="op">)</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

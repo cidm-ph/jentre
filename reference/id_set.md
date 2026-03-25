@@ -4,9 +4,7 @@ Many Entrez APIs accept either a UID list or tokens that point to a
 result stored on its history server. The classes here wrap these and
 keep track of the database name that the identifiers belong to. Most of
 the API helpers in this package are generic over the type of ID set and
-so can be used the same way with either type. For large numbers of UIDs,
-the web history versions are generally recommended to avoid running into
-server-side request timeouts.
+so can be used the same way with either type.
 
 ## Usage
 
@@ -79,6 +77,10 @@ as_id_list(x, .paginate = 5000L, .path = NULL, .call = current_env())
 
 ## Details
 
+It usually will not make sense to create `web_history()` objects
+directly - they are short-lived pointers to results on the Entrez
+history server and are created by other API calls.
+
 `id_list` is a vector and can be manipulated to take subsets (e.g.
 `id_set[1:10]` or `tail(id_set)`).
 
@@ -97,3 +99,9 @@ Convert `web_history` to `id_list` with `as_id_list()`.
 [`entrez_validate()`](https://cidm-ph.github.io/jentre/reference/entrez_validate.md)
 and
 [`entrez_count()`](https://cidm-ph.github.io/jentre/reference/entrez_count.md)
+
+## Examples
+
+``` r
+bioprojects <- id_list("bioproject", c("1241475"))
+```

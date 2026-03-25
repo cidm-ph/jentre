@@ -115,7 +115,7 @@ esearch(
 
 ## Value
 
-id set object (either a
+An id set object (either a
 [`web_history`](https://cidm-ph.github.io/jentre/reference/id_set.md) or
 an [`id_list`](https://cidm-ph.github.io/jentre/reference/id_set.md)).
 
@@ -130,3 +130,15 @@ Other API methods:
 [`entrez_validate()`](https://cidm-ph.github.io/jentre/reference/entrez_validate.md),
 [`epost()`](https://cidm-ph.github.io/jentre/reference/epost.md),
 [`esummary()`](https://cidm-ph.github.io/jentre/reference/esummary.md)
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+esearch("mpox virus[orgn]", "biosample")
+# → esearch db="biosample" term="mpox virus[orgn]" retmode="xml" rettype="uilist" usehistory="y"
+# ℹ eSearch query "\"Monkeypox virus\"[Organism]" has 7189 results
+# <entrez@/biosample[1]>
+# [1] MCID_69c36.#1[7189]
+} # }
+```

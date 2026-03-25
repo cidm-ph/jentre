@@ -19,9 +19,12 @@ applications.
 
 ## Installation
 
-You can install the development version of jentre like so:
+You can install jentre like so:
 
 ``` r
+# CRAN release
+install.packages('jentre')
+
 # development version
 install.packages('jentre', repos = c('https://cidm-ph.r-universe.dev', 'https://cloud.r-project.org'))
 ```

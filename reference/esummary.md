@@ -2,8 +2,7 @@
 
 ESummary is faster than EFetch because it only interacts with the
 frontend rather than the full database. It contains more limited
-information. Consider adding `version = "2.0"` to request the revised
-output format.
+information.
 
 ## Usage
 
@@ -108,6 +107,12 @@ esummary(
   [`cli::cli_abort()`](https://cli.r-lib.org/reference/cli_abort.html).
   You only need to specify this in internal helper functions that don't
   need to be mentioned in error messages.
+
+## Value
+
+Combined output of `.process` from each page of results. For the default
+where `.process` does nothing, this will be a list of XML documents. For
+other choices, it can be a vector, list, or data frame.
 
 ## See also
 

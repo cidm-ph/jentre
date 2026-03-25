@@ -26,9 +26,5 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Carl Suster <Carl.Suster@health.nsw.gov.au>
-([ORCID](https://orcid.org/0000-0001-7021-9380))
-
-Other contributors:
-
-- Western Sydney Local Health District, NSW Health \[copyright holder\]
+**Maintainer**: Carl Suster <carl.suster@sydney.edu.au>
+([ORCID](https://orcid.org/0000-0001-7021-9380)) \[copyright holder\]

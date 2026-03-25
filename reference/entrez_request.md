@@ -102,3 +102,16 @@ searches for the API key in the following order:
 You can check the value is found properly using `entrez_api_key()`. If
 no API key is set, a warning will be displayed. This can be suppressed
 by setting the option `"jentre.silence_api_warning"` to `TRUE`.
+
+## Examples
+
+``` r
+library(httr2)
+
+req <- entrez_request("esearch.fcgi", db = "nucleotide", term = "biomol+trna[prop]")
+#> ! No API key was provided. Set ENTREZ_KEY to reduce rate limiting.
+#> ℹ More info on API keys: https://support.nlm.nih.gov/kbArticle/?pn=KA-05317
+if (FALSE) { # \dontrun{
+# You'll need to perform the request with httr2 and parse it yourself:
+req_perform(req) |> resp_body_xml()} # }
+```

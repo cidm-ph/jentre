@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Toolkit for the Entrez API">
-<meta name="description" content="A client for interacting with NCBIs Entrez' API &lt;https://www.ncbi.nlm.nih.gov/books/NBK25499/&gt;.">
-<meta property="og:description" content="A client for interacting with NCBIs Entrez' API &lt;https://www.ncbi.nlm.nih.gov/books/NBK25499/&gt;.">
+<meta name="description" content="Interact with the Entrez API hosted by the National Center for Biotechnology Information (NCBI), &lt;https://www.ncbi.nlm.nih.gov/books/NBK25499/&gt;. This package is focused on working with sequence metadata and links. It handles pagination and compensates for some API limitations to simplify these tasks. API calls are printed to the console to highlight how high-level queries are translated into individual HTTP requests.">
+<meta property="og:description" content="Interact with the Entrez API hosted by the National Center for Biotechnology Information (NCBI), &lt;https://www.ncbi.nlm.nih.gov/books/NBK25499/&gt;. This package is focused on working with sequence metadata and links. It handles pagination and compensates for some API limitations to simplify these tasks. API calls are printed to the console to highlight how high-level queries are translated into individual HTTP requests.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -32,6 +32,7 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -62,9 +63,12 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of jentre like so:</p>
+<p>You can install jentre like so:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># development version</span></span>
+<code class="sourceCode R"><span><span class="co"># CRAN release</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'jentre'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># development version</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'jentre'</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'https://cidm-ph.r-universe.dev'</span>, <span class="st">'https://cloud.r-project.org'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -159,8 +163,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Carl Suster <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-7021-9380" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
-<li><a href="authors.html">More about authors...</a></li>
+<li>Carl Suster <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0001-7021-9380" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
@@ -168,6 +171,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/cidm-ph/jentre/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/cidm-ph/jentre/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://CRAN.R-project.org/package=jentre" class="external-link"><img src="https://www.r-pkg.org/badges/version/jentre" alt="CRAN status"></a></li>
 </ul>
 </div>
 
