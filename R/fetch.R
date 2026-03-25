@@ -171,11 +171,22 @@ efetch_impl <- function(
   )
 
   if (.paginate == 0L) {
-    req <- new_request(.endpoint, params, .method = .method, .cookies = .cookies, .call = .call)
+    req <- new_request(
+      .endpoint,
+      params,
+      .method = .method,
+      .cookies = .cookies,
+      .call = .call
+    )
     resp <-
       httr2::req_perform(req, path = path_glue_dummy(.path)) |>
       parse_response(retmode, call = .call) |>
-      process_response(fn = .process, envir = .process_efetch, call = .call, arg = ".process")
+      process_response(
+        fn = .process,
+        envir = .process_efetch,
+        call = .call,
+        arg = ".process"
+      )
     return(resp)
   }
 
@@ -195,15 +206,29 @@ efetch_impl <- function(
     params$retstart <- NULL
     params$retmax <- .paginate
     req <- new_request(
-      .endpoint, params, .method = "POST", .body_params = c("id"),
-      .cookies = .cookies, .call = .call
+      .endpoint,
+      params,
+      .method = "POST",
+      .body_params = c("id"),
+      .cookies = .cookies,
+      .call = .call
     )
-    iterate_body_form(id = Map(il_ids_get, sets[2:length(sets)]), .multi = "comma", .call = .call)
+    iterate_body_form(
+      id = Map(il_ids_get, sets[2:length(sets)]),
+      .multi = "comma",
+      .call = .call
+    )
   } else {
     n_batches <- ceiling(n_items / .paginate)
     n_per_batch <- ceiling(n_items / n_batches)
     params$retmax <- n_per_batch
-    req <- new_request(.endpoint, params, .method = .method, .cookies = .cookies, .call = .call)
+    req <- new_request(
+      .endpoint,
+      params,
+      .method = .method,
+      .cookies = .cookies,
+      .call = .call
+    )
     httr2::iterate_with_offset(
       param_name = "retstart",
       start = retstart,
@@ -223,7 +248,12 @@ efetch_impl <- function(
     httr2::resps_successes() |>
     httr2::resps_data(function(resp) {
       parse_response(resp, retmode, call = .call) |>
-        process_response(fn = .process, envir = .process_efetch, call = .call, arg = ".process")
+        process_response(
+          fn = .process,
+          envir = .process_efetch,
+          call = .call,
+          arg = ".process"
+        )
     })
 }
 

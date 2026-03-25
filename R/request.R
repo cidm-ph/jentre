@@ -209,7 +209,10 @@ debug_request <- function(type, msg) {
     lines <- unlist(strsplit(x, "\r?\n", useBytes = TRUE))
     if (startsWith(lines[[1]], "HTTP")) {
       msg <- "{.strong {(.info$endpoint)}}"
-      parm <- .info$data[setdiff(names(.info$data), c("tool", "email", "api_key"))]
+      parm <- .info$data[setdiff(
+        names(.info$data),
+        c("tool", "email", "api_key")
+      )]
       if (length(parm) > 0L) {
         msg <- paste0(msg, " ", format_kv(parm))
       }
@@ -235,7 +238,7 @@ format_kv <- function(x) {
   commas <- gregexpr(",", vals)
   commas <- regmatches(vals, commas) |> lengths()
   vals <- gsub(",.*,", ",{cli::symbol$ellipsis},", vals)
-  suff[commas > 0L] <-  paste0("[", commas[commas > 0L] + 1L, "]")
+  suff[commas > 0L] <- paste0("[", commas[commas > 0L] + 1L, "]")
 
   # deal with id="a" id="b" id="c" id="d"
   group_l <- keys == keys[seq_along(keys) + 1]
@@ -245,7 +248,10 @@ format_kv <- function(x) {
   group_n <- sapply(keys, \(x) sum(keys == x) - 2)
   group_start <- group_l & (group_n > 1L)
   elide <- group_l & group_r & (group_n > 1L)
-  suff[group_start] <- paste0(" {cli::symbol$ellipsis}{cli::symbol$times}", group_n[group_start])
+  suff[group_start] <- paste0(
+    " {cli::symbol$ellipsis}{cli::symbol$times}",
+    group_n[group_start]
+  )
   keys <- keys[!elide]
   vals <- vals[!elide]
   suff <- suff[!elide]
