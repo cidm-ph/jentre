@@ -56,10 +56,10 @@
 #'
 #' \dontrun{
 #' links <- elink(id_set, "bioproject", linkname = "sra_bioproject")
-#' # → elink db="bioproject" dbfrom="sra" retmode="xml" cmd="neighbor" linkname="sra_bioproject"
-#' #   ★ id="39889350" id="39889348" id="39889347"
+#' # -> elink db="bioproject" dbfrom="sra" retmode="xml" cmd="neighbor" linkname="sra_bioproject"
+#' #    * id="39889350" id="39889348" id="39889347"
 #' links
-#' # # A tibble: 3 × 5
+#' # # A tibble: 3 x 5
 #' #   db_from id_from   db_to      linkname       id_to
 #' #   <chr>   <list>    <chr>      <chr>          <list>
 #' # 1 sra     <chr [1]> bioproject sra_bioproject <chr [1]>

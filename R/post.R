@@ -13,7 +13,7 @@
 #'
 #' \dontrun{
 #' epost(id_set)
-#' # → epost db="sra" ★ id="39889350,…,39889347"[3]
+#' # -> epost db="sra" * id="39889350,...,39889347"[3]
 #' # <entrez@/sra[1]>
 #' # [1] MCID_69c36.#1[3]}
 epost <- function(id_set, ..., WebEnv = NULL, .path = NULL, .call = rlang::current_env()) {
