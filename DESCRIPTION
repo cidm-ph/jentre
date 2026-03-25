@@ -7,8 +7,13 @@ Authors@R:
            email = "carl.suster@sydney.edu.au",
            role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-7021-9380")))
-Description: A client for interacting with NCBI's 'Entrez' API
+Description: Interact with the 'Entrez' API
+    hosted by the National Center for Biotechnology Information (NCBI),
     <https://www.ncbi.nlm.nih.gov/books/NBK25499/>.
+    This package is focused on working with sequence metadata and links.
+    It handles pagination and compensates for some API limitations to simplify these tasks.
+    API calls are printed to the console to highlight how high-level queries are translated
+    into individual HTTP requests.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

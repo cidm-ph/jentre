@@ -60,8 +60,8 @@
 #' #   ★ id="39889350" id="39889348" id="39889347"
 #' links
 #' # # A tibble: 3 × 5
-  #' # db_from id_from   db_to      linkname       id_to
-  #' # <chr>   <list>    <chr>      <chr>          <list>
+#' #   db_from id_from   db_to      linkname       id_to
+#' #   <chr>   <list>    <chr>      <chr>          <list>
 #' # 1 sra     <chr [1]> bioproject sra_bioproject <chr [1]>
 #' # 2 sra     <chr [1]> bioproject sra_bioproject <chr [1]>
 #' # 3 sra     <chr [1]> bioproject sra_bioproject <chr [1]>
