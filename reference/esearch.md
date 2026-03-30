@@ -136,8 +136,8 @@ Other API methods:
 ``` r
 if (FALSE) { # \dontrun{
 esearch("mpox virus[orgn]", "biosample")
-# → esearch db="biosample" term="mpox virus[orgn]" retmode="xml" rettype="uilist" usehistory="y"
-# ℹ eSearch query "\"Monkeypox virus\"[Organism]" has 7189 results
+# -> esearch db="biosample" term="mpox virus[orgn]" retmode="xml" rettype="uilist" usehistory="y"
+#  i eSearch query "\"Monkeypox virus\"[Organism]" has 7189 results
 # <entrez@/biosample[1]>
 # [1] MCID_69c36.#1[7189]
 } # }
