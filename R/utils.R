@@ -15,6 +15,10 @@ parse_response <- function(resp, retmode, ..., errors = TRUE, call = caller_env(
 
 raise_xml_error <- function(doc, call = caller_env()) {
   err <- xml_find_first(doc, "//ERROR")
+  if (is.na(err)) {
+    err <- xml_find_first(doc, "//error")
+  }
+
   if (!is.na(err)) {
     cli::cli_abort(
       c("Entrez error encountered in XML response", "x" = xml_text(err)),
